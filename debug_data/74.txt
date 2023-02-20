@@ -1,0 +1,112 @@
+C++ 求问一个用类实现的计数器问题
+大家好！
+下面是我写的一段简单的C++计数器代码：
+#include 
+using namespace std;
+int main()
+{
+    int value = 0;
+    cout << "请输入原值： ";
+    cin >> value;
+    cout << "原值是： " << value << endl;
+    char sign;
+    cout << "请输入 + 或 - 进行加减计数，大写字母Z结束程序。" << endl;
+    cin >> sign;
+    while (sign != 'Z')
+    {
+        if (sign == '+')
+        {
+            value++;
+            cout << "现值为： " << value << endl;
+        }
+        else
+        {
+            value--;
+            cout << "现值为： " << value << endl;
+        }
+        cin >> sign;
+    }
+    cout << "计数结果为： " << value << endl;
+    system("pause");
+}
+现在的问题是想要用下面的类实现，不知道具体怎么实现，求问！
+下面是一个计数器类的定义，请完成该类的实现，并在main( )函数中演示该类的应用。
+class counter{
+int value;
+public:
+counter(int number);
+void increment();        //给原值加1
+void decrement();        //给原值减1
+int getvalue();          //取得计数器的值
+void print();            //显示计数器的值
+}; 
+----------------------------------------------------------------------------------------------------
+问题已解决,想错了。。。。。。。。。。
+#include 
+using namespace std;
+class Counter
+{
+public:
+    Counter(int number);
+    void increment();        //给原值加1
+    void decrement();        //给原值减1
+    int getvalue();          //取得计数器的值
+    void print();            //显示计数器的值
+private:
+    int value;
+};
+int Counter::getvalue()
+{
+    cin >> value;
+    return value;
+}
+void Counter::increment()
+{
+    value++;
+}
+void Counter::decrement()
+{
+    value--;
+}
+void Counter::print()
+{
+    cout << "现值是:" << value << endl;
+}
+Counter::Counter(int number)
+{
+    value = number;
+}
+int main()
+{
+    Counter v(0);
+    cout << "请输入原值:" ;
+    v.getvalue();
+    v.print();
+    cout << "请输入 + 或 - 执行加减,输入 * 执行原值重输,输入 / 结束程序!" << endl;
+    char c;
+    cin >> c;
+    while ( c != '/')
+    {
+        if( c == '+')
+        {
+            v.increment();
+            v.print();
+        }
+        else if ( c == '-')
+        {
+            v.decrement();
+            v.print();
+        }
+        else
+        {
+            v.getvalue();
+            v.print();
+        }
+        cin >> c;
+    }
+    cout << "计数已结束!" << endl;
+    v.print();
+    cout << endl;
+    system("pause");
+    return 0;
+}

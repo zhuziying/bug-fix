@@ -1,0 +1,102 @@
+php用fsockopen来GET网页 就是不成功 觉得是fread那里有问题 求大神解答
+<?php
+class Http {
+const CRLF = " ";
+protected $fp = null;
+protected $errno = -1;
+protected $errstr = 'error';
+protected $fenxi = array();
+protected $method = '';
+protected $out = '';
+//我觉得不需要下面两个
+protected $lineone = array();
+protected $linetwo = array();
+public function __construct($url) {
+$this->conn($url);
+//$this->same($this->method);
+}
+public function __destruct() {
+$this->close();
+}
+public function conn($url) {
+$this->fenxi = parse_url($url);
+if (empty($this->fenxi['port'])) {
+$this->fenxi['port'] = 80;
+}
+$this->fp = fsockopen($this->fenxi['host'], $this->fenxi['port'], $this->errno, $this->errstr, 3);
+if (!$this->fp) {
+echo $this->errstr;
+}
+}
+public function same($method) {
+$this->lineone[0] = $method . ' ' . $this->fenxi['path'] . ' ' . 'HTTP/1.1';
+$this->linetwo[0] = 'Host:' . ' ' . $this->fenxi['host'];
+$arr = array_merge($this->lineone, $this->linetwo);
+$string = implode(self::CRLF, $arr);
+if ($method == 'GET') {
+$this->get($string);
+} elseif ($method == 'POST') {
+$this->post($string);
+} else {
+echo "method error";
+exit;
+}
+}
+public function get($str) {
+//如果还要写别的东西 写在下面拼接
+//这里直接处理$str
+fwrite($this->fp, $str);
+while (!feof($this->fp)) {
+$this->out .= fread($this->fp, 1024);
+echo "ok";exit;
+}
+$this->show();
+}
+public function post($str) {
+}
+public function close() {
+fclose($this->fp);
+}
+public function show() {
+echo $this->out;
+}
+}
+$test = new Http('http://news.163.com/13/0613/09/9187CJ4C00014JB6.html');
+$test->same('GET');
+?> 
+----------------------------------------------------------------------------------------------------
+要把http相关协议参数补齐,还有最后面要加两个换行。另外get代码里read了第一次后就exit了,所以没有调用show()。下面是改后的代码。
+<code>     public function same($method) {
+        $string = implode(self::CRLF, 
+            [$method . ' ' . $this->fenxi['path'] . ' ' . 'HTTP/1.1',
+             'Host:' . $this->fenxi['host'],
+             'User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3',
+             'Connection:close',
+             '',
+             ''
+            ]);
+        echo $string;
+        if ($method == 'GET') {
+            $this->get($string);
+        } elseif ($method == 'POST') {
+            $this->post($string);
+        } else {
+            echo "method error";
+            exit;
+        }
+    }
+
+    public function get($str) {
+        //如果还要写别的东西 写在下面拼接
+        var_dump($this->fp);
+        //这里直接处理$str
+        $result = fwrite($this->fp, $str);
+
+        while (!feof($this->fp)) {
+            $read = fread($this->fp, 1024);
+            $this->out .= $read;
+        }
+        $this->show();
+    }
+
+</code>

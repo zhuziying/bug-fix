@@ -1,0 +1,37 @@
+一个二分搜索的递归函数问题
+使用函数 int binarysearch(int t,int x[],int n);
+编写递归二分搜索算法，并且不使用其它辅助递归函数。
+然后我编写的了如下代码：
+int search(int t,int x[],int n)
+{
+    int low=(n-1)/2;
+<code>if( x > x+n ) return -1;
+if( t > x[low] )
+{
+    search(t,x+low+1,n);
+}
+else if( t < low ){
+    search(t,x,low+2);
+}
+else
+    return low; 
+</code>
+}
+但是返回的位置却不是正确的，我明白为什么不正确，但是却找不到好的方法，谁能拯救一下我？ 
+----------------------------------------------------------------------------------------------------
+int search(int t,int x[],int n)
+{
+    int low=(n-1)/2;
+<code>if( x > x+n ) return -1;
+if( t > x[low] )
+{
+    return search(t,x+low+1,n-low-1) + low +1;
+}
+else if( t < x[low] ){
+    return search(t,x,low);
+}
+else
+    return low; 
+</code>
+}
+测试通过

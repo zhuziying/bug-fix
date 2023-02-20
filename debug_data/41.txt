@@ -1,0 +1,63 @@
+用SQL语句查询User表中newsh属性为“政治类新闻”和“娱乐类新闻”的人数放入MAP中
+用SQL语句查询User表中newsh属性为“政治类新闻”和“娱乐类新闻”的人数放入MAP中
+问题一：整个方法该如何实现
+问题二：SQL语句怎么写
+参考用例
+类似这样的方法 新手不知道该怎么改动成自己需要的方法
+求助各位大神
+<code>public Map<String, Long> totalInventory(int year){
+        //获取采购订单（已入库status=2）中指定产品的数量
+        String sql = "select month(p.pur_date) m, sum(pi.num) n "
+                     + " from t_purchase_item pi "
+                     + " join t_purchase p on pi.purc_id=p.id "
+                     + " where p.status=2 and year(p.pur_date) = ? "
+                     + " group by month(p.pur_date)";
+
+        Map<String, Long> map = getSession().doReturningWork(new ReturningWork<Map<String, Long>>() {
+            @Override
+            public Map<String, Long> execute(Connection conn)
+                    throws SQLException {
+                Map<String, Long> map = new LinkedHashMap<String, Long>();
+
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                pstmt.setInt(1, year);
+
+                ResultSet rs = pstmt.executeQuery();
+                while(rs.next()){
+                    String month = rs.getString(1);
+                    Long num = Long.valueOf(rs.getLong(2));
+                    map.put(month, num);
+                }
+
+                return map;
+            }
+        });
+
+        return map;
+    } 
+</code> 
+----------------------------------------------------------------------------------------------------
+<code> public Map<String, Long> sumPolEntNews(){
+        //查询政治类新闻和娱乐类新闻的总数
+        String sql = "select count(*) from USER where  newsh ='政治类新闻' or newsh ='娱乐类新闻'";
+
+        Map<String, Long> map = getSession().doReturningWork(new ReturningWork<Map<String, Long>>() {
+            @Override
+            public Map<String, Long> execute(Connection conn)
+                    throws SQLException {
+                Map<String, Long> map = new LinkedHashMap<String, Long>();
+
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+
+                ResultSet rs = pstmt.executeQuery();
+                while(rs.next()){
+                    Long num = Long.valueOf(rs.getLong(1));
+                    map.put("政治类新闻和娱乐类新闻的总数", num);
+                }
+                return map;
+            }
+        });
+
+        return map;
+    } 
+</code>

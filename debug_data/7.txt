@@ -1,0 +1,19 @@
+Python3.4 class 输出问题一个None
+以下是代码：
+class FClass:
+    def setdata(self,value):
+        self.data = value
+    def display(self):
+        print (self.data)
+a = FClass()
+print ('标记1')
+a.setdata('dsss')
+print ('标记2',a.display())
+以下是输出：
+标记1
+dsss
+标记2 None
+不明白的是为什么会有一个None输出，而如果将print ('标记2',a.display())注释掉，就不会有输出了，初学Python，还望赐教。 
+----------------------------------------------------------------------------------------------------
+因为你 def 的函数 display()里,没有返回值,所以系统默认输出一个 None
+如果你把 def display(self)  下面的 print(self.data) 改成 return self.data 就可以了

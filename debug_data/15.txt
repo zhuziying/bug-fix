@@ -1,0 +1,168 @@
+求助！！python web AttributeError 怎么改？ 
+import socket
+import xml.dom.minidom
+import web
+import threading 
+import json,time
+g_nodetemp =''
+global a
+urls = (
+        '/(.*)', 'hello'
+    )
+app = web.application(urls, globals())
+class hello():
+        def GET(self,name):
+            name = (open('client.txt','r')).read().rstrip()
+            datatime = time.asctime()
+            print 'hello  => '
+            print  'datatime',datatime 
+            return  name
+class Tcpclient():
+    '''docstring for Tcpclient'''
+<code>def __init__(self):
+    self.host ='192.168.48.78'
+    self.port = 9005
+    self.temp = ''
+def Start(self):
+    s = socket.socket()
+    s.connect((self.host,self.port))
+    print 'Connection Succeful'
+    a = True
+    print a
+    while True:
+        try :
+            datarecv = s.recv(1024).rstrip()
+            self.temp = self.temp + datarecv
+            indexTail = self.temp.find('</MotePacket>')
+            indexHead = self.temp.find('<MotePacket>')
+            if indexHead > 0 and indexTail>0 and indexHead < indexTail:
+                datarecv = self.temp[indexHead: indexTail+13]
+                get_tagname(datarecv)
+                self.temp = self.temp[indexTail+13:]
+        except Exception,e:
+            print 'connecting fail!',e
+            a = False
+</code>
+def interval():
+    if a == True:
+        time.sleep(10)
+    else:
+        test()
+def get_tagname(tagname):
+    global g_nodetemp
+    dom = xml.dom.minidom.parseString(tagname)
+    root = dom.documentElement
+    for node in root.getElementsByTagName("PacketName"):
+        for child in node.childNodes:
+                print node.tagName+':',child.nodeValue
+                Dicdata = {}
+                Dicdata[node.tagName] = child.nodeValue
+                print Dicdata
+    for node in root.getElementsByTagName("NodeId"):
+        for child in node.childNodes:
+                print  node.tagName+':',child.nodeValue
+                Dicdata[node.tagName] = child.nodeValue
+                print Dicdata
+                datatime = time.asctime()
+                Dicdata['time'] = datatime
+                print  'datatime',datatime 
+                datajson = json.dumps(Dicdata)
+                print 'datajson',datajson
+                f = open('client.txt','a')
+                f.write(datajson)
+                f.close()
+def test():
+    m = Tcpclient()
+    m.Start()
+if name == '__main__':
+    print 'start client =>'
+    threading.Thread(target=test).start()
+    print 'start web server =>'
+    threading.Thread(target= app.run).start()
+    print 'interval=>'
+    threading.Thread(target=interval).start()
+返回错误AttributeError:'module'object has no attribute'application' 
+----------------------------------------------------------------------------------------------------
+import socket
+import xml.dom.minidom
+import web
+import threading 
+import json,time
+g_nodetemp =''
+global a
+urls = (
+        '/(.*)', 'hello'
+    )
+app = web.application(urls, globals())
+class hello():
+        def GET(self,name):
+            name = (open('client.txt','r')).read().rstrip()
+            datatime = time.asctime()
+            print 'hello  => '
+            print  'datatime',datatime 
+            return  name
+class Tcpclient():
+    '''docstring for Tcpclient'''
+<code>def __init__(self):
+    self.host ='192.168.48.78'
+    self.port = 9005
+    self.temp = ''
+def Start(self):
+    s = socket.socket()
+    s.connect((self.host,self.port))
+    print 'Connection Succeful'
+    a = True
+    print a
+    while True:
+        try :
+            datarecv = s.recv(1024).rstrip()
+            self.temp = self.temp + datarecv
+            indexTail = self.temp.find('</MotePacket>')
+            indexHead = self.temp.find('<MotePacket>')
+            if indexHead > 0 and indexTail>0 and indexHead < indexTail:
+                datarecv = self.temp[indexHead: indexTail+13]
+                get_tagname(datarecv)
+                self.temp = self.temp[indexTail+13:]
+        except Exception,e:
+            print 'connecting fail!',e
+            a = False
+</code>
+def interval():
+    if a == True:
+        time.sleep(10)
+    else:
+        test()
+def get_tagname(tagname):
+    global g_nodetemp
+    dom = xml.dom.minidom.parseString(tagname)
+    root = dom.documentElement
+    for node in root.getElementsByTagName("PacketName"):
+        for child in node.childNodes:
+                print node.tagName+':',child.nodeValue
+                Dicdata = {}
+                Dicdata[node.tagName] = child.nodeValue
+                print Dicdata
+    for node in root.getElementsByTagName("NodeId"):
+        for child in node.childNodes:
+                print  node.tagName+':',child.nodeValue
+                Dicdata[node.tagName] = child.nodeValue
+                print Dicdata
+                datatime = time.asctime()
+                Dicdata['time'] = datatime
+                print  'datatime',datatime 
+                datajson = json.dumps(Dicdata)
+                print 'datajson',datajson
+                f = open('client.txt','a')
+                f.write(datajson)
+                f.close()
+def test():
+    m = Tcpclient()
+    m.Start()
+if name == '__main__':
+    print 'start client =>'
+    threading.Thread(target=test).start()
+    print 'start web server =>'
+    threading.Thread(target= app.run).start()
+    print 'interval=>'
+    threading.Thread(target=interval).start()
+代码

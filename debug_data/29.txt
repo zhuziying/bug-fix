@@ -1,0 +1,109 @@
+php上传文件出现错误，求大家解释一下，怎么修改？
+一共四个文件：
+1、
+<code> <?php
+require('config.php');
+?>
+
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title><?=SITE_NAME?></title></head><body>
+<p><b><a href="<?=SITE_DIR?>"><?=SITE_NAME?></a><br></b><?=SITE_ADV?></p><br>
+<p><form enctype="multipart/form-data" action="upload.php" method="post"><input type="file" name="uploadfile"><input type="submit" value="上传"></form></p>       
+</body></html>
+</code>
+2、
+<code> <?php
+define('SITE_NAME','外链盘');
+define('SITE_ADV','文件保存5天，最大10MB。随时删除，请勿上传重要文件。全部公开，请勿上传私密文件。');
+define('SITE_DIR','http://www.abc.com/'); //包含尾部"/"
+define('UPLOAD_DIR','u/'); //包含尾部"/","u"目录及根目录设为777
+define('MAX_SIZE','99999999999999999999'); //文件最大字节大小
+$valid_suffix = array('.php','.asp','.aspx');//不允许上传类型
+function valid_suffix($suffix){
+    global $valid_suffix;
+    if (!in_array($suffix,$valid_suffix)){
+        return true;
+    }else{
+        return false;
+    }
+}
+?>
+</code>
+3、
+<code> <?php
+require('config.php');
+
+if($_FILES['uploadfile']['error']>0){
+    $uploadtype = false;
+    switch($_FILES['uploadfile']['error']){
+    }
+}
+$suffix = strtolower(substr($_FILES['uploadfile']['name'],-4));
+    if(!valid_suffix($suffix)){
+    $uploadtype = false;
+}
+    if($uploadtype === false){
+}else{
+$userip = ip2long($_SERVER['REMOTE_ADDR']);
+$time = time();
+$newpath = UPLOAD_DIR . $time .'x'. $userip . $suffix;
+if(is_uploaded_file($_FILES['uploadfile']['tmp_name'])){
+if(!move_uploaded_file($_FILES['uploadfile']['tmp_name'],$newpath)){
+$uploadtype = false;
+}else{
+$uploadtype = true;
+}
+}else{
+$uploadtype = false;
+}
+}
+if($uploadtype === false){
+}else{
+setcookie('uploaded',$time.'x'.$userip.$suffix.'|'.$_COOKIE['uploaded'],time()+3600*24*365);
+}
+?>
+
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title><?=SITE_NAME?></title></head><body>
+<p><b><a href="<?=SITE_DIR?>"><?=SITE_NAME?></a><br></b><?=SITE_ADV?></p><br>
+<?php
+if($uploadtype === false){
+?>
+<p><b>上传失败！</b><br>
+<br>文件不存在，过大或不允许该扩展名。<br>
+<br><a href="<?=SITE_DIR?>">重新上传</a></p>
+<br><p><a href="http://xxcv.net">返回首页</a> <a href="http://straysky.com" target="_blank">Powered by Straysky</a></p>
+<?php
+}else{
+?>
+<p><b>上传成功！</b><br>
+<br>文件代码：<br>
+标准：<input value="<?=SITE_DIR.$newpath?>" style="width:500px;" onclick="this.select();" /><br>
+HTML：<input value="<a href=<?=SITE_DIR.$newpath?> target=_blank>点此查看文件[xxcv.net]</a>" style="width:500px;" onclick="this.select();" /><br>
+<br>图片代码：<br>
+论坛：<input value="[img]<?=SITE_DIR.$newpath?>[/img]" style="width:500px;" onclick="this.select();" /><br>
+HTML：<input value="<img src=<?=SITE_DIR.$newpath?>>" style="width:500px;" onclick="this.select();" /><br>
+<br><a href="<?=SITE_DIR?>">继续上传</a></p>
+<br><p><a href="http://xxcv.net">返回首页</a> <a href="http://straysky.com" target="_blank">Powered by Straysky</a></p>
+<?php
+}
+?>
+</body></html>
+</code>
+4、
+<code>  <meta http-equiv="refresh" content="0;>
+</code>
+最后一个文件夹U，出现这样的错误 
+----------------------------------------------------------------------------------------------------
+这个是一个警告
+<code> if($_FILES['uploadfile']['error']>0){
+    $uploadtype = false;
+    switch($_FILES['uploadfile']['error']){
+    }
+}
+$suffix = strtolower(substr($_FILES['uploadfile']['name'],-4));
+    if(!valid_suffix($suffix)){
+    $uploadtype = false;
+}
+
+</code>
+你看 要是上传的文件后缀合法 而且没有错误  你的这个$uoloadtype就是未定义 当然就报错
+你可以在if(@$uploadtype === false) 加上错误控制来屏蔽掉警告继续执行

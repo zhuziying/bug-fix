@@ -1,0 +1,85 @@
+c#使用选择排序出错，有时会出现重复或者排错
+选择排序是通过选取一组数中的最大值(最小值),然后将最大值(最小值)和数组首位的值相交换，然后再对除第一个值得剩下的数进行排序。请看看我写的
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace 选择排序
+{
+class Program
+{
+static int[] num = new int[10];
+static int[] aa = { 342, 432, 543, 43, 32, 543, 654, 56, 7, 3 };
+static void Main(string[] args)
+{
+/*
+Console.WriteLine("请输入10个整数");
+for (int i = 0; i < num.Length; i++)
+{
+Console.WriteLine("你输入的第" + (i+1) + "个数是");
+int.TryParse(Console.ReadLine(), out num[i]);
+}
+*/
+num = sortArr2(aa);
+Console.WriteLine("排序后的顺序是");
+for (int i = 0; i < num.Length; i++)
+{
+Console.Write(num[i] + "\t");
+}
+Console.ReadKey();
+}
+private static int[] sortArr2(int[] a)
+{
+//a[1,22,2]i是正确的
+//最开始假定最小值为a[0]
+int max;
+int a_;
+int i = 0;//十个数都循环
+int j;//开始比较的数的下标
+for (; i < a.Length; i++)//length=3
+{
+max = a[i];//假设最大值，赋值
+for (j = 1 + i; j < a.Length; j++)//和剩下的进行比较，找出最大值
+{
+if (a[j] > max)
+max = a[j];
+}
+a_ = Array.IndexOf(a, max);//通过找到的最大数确定其位置
+Console.WriteLine("a_的值是"+(a_+1)+"最大值是"+max);
+a[i] = max + (a[a_] = a[i]) * 0;//让最大值a[a_]==max和当前的a[i]交换
+}
+return a;
+}
+}
+} 
+----------------------------------------------------------------------------------------------------
+private static int[] sortArr2(int[] a)
+        {
+            //a[1,22,2]i是正确的
+            //最开始假定最小值为a[0]
+            int max;
+            int a_=0;
+            int i = 0;//十个数都循环
+            int j;//开始比较的数的下标
+            for (; i < a.Length - 1; i++) //length=3
+            {
+<code>            max = a[i]; //假设最大值,赋值
+            for (j = 1 + i; j < a.Length; j++) //和剩下的进行比较,找出最大值
+            {
+                if (a[j] > max)
+                {
+                    max = a[j];
+                    a_ = j;
+                }
+            }
+
+            if (max != a[i])
+            {
+                Console.WriteLine("a_的值是" + (a_ + 1) + "最大值是" + max);
+                a[i] = max + (a[a_] = a[i]) * 0;//让最大值a[a_]==max和当前的a[i]交换
+            }
+        }
+        return a;
+    }
+</code>

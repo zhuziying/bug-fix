@@ -1,0 +1,36 @@
+PHP用户注册调试时preg_match( )发生错误
+在用户名注册时，我加入了正则表达式验证，可是在preg_match()函数进行匹配却总是出错
+代码如下：
+<code>//在注册函数库里编写的函数：
+function check($username){
+    $pattern = '/[\<>\'\"\ \　\]/';    //匹配左右尖括号、英文单双引号、半角空格、全角空格
+        if(preg_match($pattern, $username)){
+            echo "<script>alert('Error: contain sensitive character!');history.back();</script>";
+        }
+}
+
+//然后在注册页面调用
+$tmpArray = array();
+$tmpArray['username'] = check($_POST['username']);
+</code>
+结果，我在用户名输入表单里随意输入了一个用户名aaa'aaa，提交后在页面头弹出错误：Warning: preg_match() [function.preg-match]: Compilation failed: missing terminating ] for character class at offset 14 in D:/........
+请问，这错误的出现的原因是什么？我用了IE11、Firefox38都出现同样的错误。最后，在我的编辑器里，$pattern = '/[<>\'\"\ \　]/'里的英文单引号显现出转义形态，可是怎么处理都还是那个样子，这个又是什么情况？
+谢谢啦！ 
+----------------------------------------------------------------------------------------------------
+<code> <?php
+function check($username){
+    $pattern = '/[\<>\'\"\ \ ]/';    //匹配左右尖括号、英文单双引号、半角空格、全角空格
+    if(preg_match($pattern, $username)){
+        echo "<script>alert('Error: contain sensitive character!');history.back();</script>";
+        exit('Error: contain sensitive character!');
+    }else{
+        return $username;
+    }
+}
+
+//然后在注册页面调用
+$tmpArray = array();
+$tmpArray['username'] = check($_GET['username']);
+?>
+
+</code>

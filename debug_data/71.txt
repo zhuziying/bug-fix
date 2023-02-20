@@ -1,0 +1,27 @@
+python调用方法的一些问题
+A()
+def A():
+     方法块
+这样写就报错。。
+def A():
+     方法块
+A()
+必须得这样写，，
+有什么办法可以在定义方法之前的位置调用该方法？ 
+----------------------------------------------------------------------------------------------------
+class Test(object):
+<code>def main(self):
+    self.B()
+
+def B(self):
+    self.A()
+    print "b"
+
+def A(self):
+    print "a"
+</code>
+if name == '__main__':
+    t = Test()
+    t.main()
+<code>
+</code>

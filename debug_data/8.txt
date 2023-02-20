@@ -1,0 +1,101 @@
+从AsyncTask中获取数据的问题
+MainActivity调用 DataCall.getJSON方法，然后触发AsyncTask。但是我不确定如何将数据返回到原始的Activity。如何从AsyncTask中获取数据?
+MainActivity调用 DataCall,应该返回一个字符串并将其保存在state_data。
+<code>String state_data =  DataCall.getJSON(spinnerURL,spinnerContentType);
+</code>
+DataCall:
+<code>public class DataCall extends Activity {
+    private static final String TAG = "MyApp";
+
+
+    private class DownloadWebPageTask extends AsyncTask<String, Void, String> {
+
+
+        protected String doInBackground(String... urls) {
+            String response = "";
+            for (String url : urls) {
+                DefaultHttpClient client = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(url);
+                try {
+                    HttpResponse execute = client.execute(httpGet);
+                    InputStream content = execute.getEntity().getContent();
+
+                    BufferedReader buffer = new BufferedReader(
+                            new InputStreamReader(content));
+                    String s = "";
+                    while ((s = buffer.readLine()) != null) {
+                        response += s;
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return response;
+        }
+
+
+        protected void onPostExecute(String result) {
+            //THIS IS WHERE I NEED TO RETURN MY DATA TO THE MAIN ACTIVITY. (I am guessing)
+        }
+
+        }
+
+    public void getJSON(String myUrlString, String contentType) {
+        DownloadWebPageTask task = new DownloadWebPageTask();
+        task.execute(new String[] { "http://www.mywebsite.com/" + myUrlString });
+
+    }
+
+}
+</code> 
+----------------------------------------------------------------------------------------------------
+修改AsyncTask:
+<code>public class GetData extends AsyncTask<String, Void, String> 
+{ 
+    DataDownloadListener dataDownloadListener; 
+    public GetData() 
+    { 
+
+    } 
+    public void setDataDownloadListener(DataDownloadListener dataDownloadListener) { 
+        this.dataDownloadListener = dataDownloadListener; 
+    } 
+    @Override 
+    protected Object doInBackground(Object... param)  
+    { 
+
+        return null; 
+    } 
+    @Override 
+    protected void onPostExecute(Object results) 
+    {        
+        if(results != null) 
+        {                
+        dataDownloadListener.dataDownloadedSuccessfully(results); 
+        } 
+        else 
+        dataDownloadListener.dataDownloadFailed(); 
+    } 
+    public static interface DataDownloadListener { 
+        void dataDownloadedSuccessfully(Object data); 
+        void dataDownloadFailed(); 
+    } 
+}
+</code>
+在Activity中使用:
+<code>GetData getdata = new GetData(); 
+getdata.setDataDownloadListener(new DataDownloadListener() 
+{ 
+    @SuppressWarnings("unchecked") 
+    @Override 
+    public void dataDownloadedSuccessfully(Object data) { 
+
+    } 
+    @Override 
+    public void dataDownloadFailed() { 
+
+    } 
+}); 
+getdata.execute(""); 
+</code>

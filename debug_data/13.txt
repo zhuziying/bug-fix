@@ -1,0 +1,29 @@
+php中define带入表达式问题
+<code>define('GW_MAXFILESIZE', '32768*10');
+echo GW_MAXFILESIZE/1;
+</code>
+为什么输出是32768而不是327680呢？
+读书少……
+一个猜想，php不像C是原样替换，先发生了类型转换，遇到「*」号就直接忽略后面的了。
+若如此，那么
+    define('GW_MAXFILESIZE', '32768*10');
+    if(GW_MAXFILESIZE>0) {
+    //whatever 
+    }
+又如何处理常量呢？
+谢谢 
+----------------------------------------------------------------------------------------------------
+define('GW_MAXFILESIZE', '32768*10');
+echo GW_MAXFILESIZE;
+输出 32768*10
+define('GW_MAXFILESIZE', 32768*10);
+echo GW_MAXFILESIZE;
+才会输出 327680
+字符串中的表达式是不会自行运算的
+C语言中也是一样
+#define MY "100*3"
+printf("%是",MY);
+输出 100*3
+#define MY 100*3
+printf("%d",MY);
+输出 300

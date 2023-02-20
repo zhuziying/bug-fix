@@ -1,0 +1,37 @@
+python问题求解，怎么在程序中结束整个进程？
+tb=myblock()
+def my_block():
+        tb.Start(True)
+        tb.Wait()
+t=threading.Thread(target=my_block)
+t.setDaemon(True)
+t.start()
+start_time=time.time()
+while True:
+      print "susccess"
+      print time.time()
+      if  int(time.time()-start_time)>=2:
+            print('Warning: Timeout!!'*2)
+                    ########我想在这里添加结束进程的语句，不知道怎么写
+        break  
+----------------------------------------------------------------------------------------------------
+代码感觉有点乱。
+直接<code>break</code>的话就可以退出了。我自己运行以下代码的话就是输出若干<code>success</code>以及时间,然后2s后结束。
+<code>import time
+import threading
+
+def my_block():
+    t=threading.Thread(target=my_block)
+    t.setDaemon(True)
+    t.start()
+    start_time=time.time()
+    while True:
+        print("susccess")
+        print(time.time())
+        if int(time.time()-start_time)>=2:
+            print('Warning: Timeout!!'*2)
+            ########我想在这里添加结束进程的语句,不知道怎么写
+            break
+
+my_block()
+</code>

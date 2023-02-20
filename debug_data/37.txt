@@ -1,0 +1,73 @@
+PHP上传文件的问题$_FILES['file']['error']
+这段时间一直在啃《Head First PHP & MySQL》，这本书非常好，一步步教授怎么开发一个
+PHP网站，一直照着一步步地敲代码，现在看到487页，在测试上传文件功能时，发现前面
+的editprofile.php里面的    if ($_FILES['file']['error'] == 0) {    老是报错：
+    // Validate and move the uploaded picture file, if necessary
+    if (!empty($new_picture)) {
+      if ((($new_picture_type == 'image/gif') || ($new_picture_type == 'image/jpeg') || ($new_picture_type == 'image/pjpeg') ||
+        ($new_picture_type == 'image/png')) && ($new_picture_size > 0) && ($new_picture_size <= MM_MAXFILESIZE) &&
+        ($new_picture_width <= MM_MAXIMGWIDTH) && ($new_picture_height <= MM_MAXIMGHEIGHT)) {
+        if ($_FILES['file']['error'] == 0) {
+          // Move the file to the target upload folder
+          $target = MM_UPLOADPATH . basename($new_picture);
+          if (move_uploaded_file($_FILES['new_picture']['tmp_name'], $target)) {
+            // The new picture file move was successful, now make sure any old picture is deleted
+            if (!empty($old_picture) && ($old_picture != $new_picture)) {
+              @unlink(MM_UPLOADPATH . $old_picture);
+            }
+          }
+          else {
+            // The new picture file move failed, so delete the temporary file and set the error flag
+            @unlink($_FILES['new_picture']['tmp_name']);
+            $error = true;
+            echo 'Sorry, there was a problem uploading your picture.';
+          }
+        }
+      }
+      else {
+        // The new picture file is not valid, so delete the temporary file and set the error flag
+        @unlink($_FILES['new_picture']['tmp_name']);
+        $error = true;
+        echo 'Your picture must be a GIF, JPEG, or PNG image file no greater than ' . (MM_MAXFILESIZE / 1024) .
+          ' KB and ' . MM_MAXIMGWIDTH . 'x' . MM_MAXIMGHEIGHT . ' pixels in size.';
+      }
+    }
+
+<code>// Update the profile data in the database
+if (!$error) {
+  if (!empty($first_name) && !empty($last_name) && !empty($gender) && !empty($birthdate) && !empty($city) && !empty($state)) {
+    // Only set the picture column if there is a new picture
+    if (!empty($new_picture)) {
+      $query = "UPDATE mismatch_user SET first_name = '$first_name', last_name = '$last_name', gender = '$gender', " .
+        " birthdate = '$birthdate', city = '$city', state = '$state', picture = '$new_picture' WHERE user_id = '" . $_SESSION['user_id'] . "'";
+    }
+    else {
+      $query = "UPDATE mismatch_user SET first_name = '$first_name', last_name = '$last_name', gender = '$gender', " .
+        " birthdate = '$birthdate', city = '$city', state = '$state' WHERE user_id = '" . $_SESSION['user_id'] . "'";
+    }
+    mysqli_query($dbc, $query);
+
+    // Confirm success with the user
+    echo '<p>Your profile has been successfully updated. Would you like to <a href="viewprofile.php">view your profile</a>?</p>';
+
+    mysqli_close($dbc);
+    exit();
+  }
+  else {
+    echo '<p class="error">You must enter all of the profile data (the picture is optional).</p>';
+  }
+}
+</code>
+修改登录用户的信息并点击按钮时
+<code>就会显示下图的错误信息，而且数据库里面的信息根本没有改变！！！！
+Notice: Undefined index: file in D:\phpStudy\WWW\Mismatch\editprofile.php on line 44
+
+第44行是： if ($_FILES['file']['error'] == 0) { 
+
+请问这是什么原因，怎么解决？？代码完全是原书官网提供的，没有写错
+</code> 
+----------------------------------------------------------------------------------------------------
+我来看一下,因为文件是这样写的
+ 如果用$_FILES[filename]['error'],根据input的name值new_picture改写,上文中的file,应该改为new_picture
+  if($_FILES['new_picture']['error']==0)
+    你报错的地方,file这个参数在程序里是没有定义的,有定义的是name_picture

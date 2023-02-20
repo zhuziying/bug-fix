@@ -1,0 +1,42 @@
+请问ASP.NET中web用户控件中使用Session出错，麻烦帮忙解决下，拜托了
+在用户控件中有下列代码：
+<code>protected void Page_Load(object sender, EventArgs e)
+{
+    if (Session["user"] != null)
+    {
+        login.Text = "欢迎你," + Session["user"].ToString().Trim();
+        login.NavigateUrl = ResolveUrl("~/Home/center/lovemu.html");
+        register.Visible = false;
+        logout.Visible = true;
+    }
+    else
+    {
+        logout.Visible = false;
+        register.Visible = true;
+    }
+}
+</code>
+在Visual 2008中运行正常，但部署到IIS上就出错了，提示：
+只有在配置文件或 Page 指令中将 enableSessionState 设置为 true 时，才能使用会话状态。还请确保在应用程序配置的 <system.web><httpModules> 节中包括 System.Web.SessionStateMod 或自定义会话状态模块。
+百度了好多，说改web.config中：
+<code>        <sessionState mode="StateServer" sqlConnectionString="data source=.;Integrated Security=SSPI" timeout="1440" />
+</code>
+没有效果，麻烦帮忙解答一下哈，拜托了 
+----------------------------------------------------------------------------------------------------
+protected void Page_Load(object sender, EventArgs e)
+{
+    这里--------------------------------------------------
+    if (Session["user"].ToString().Trim() != "")
+    -----------------------------------------------------------
+    {
+        login.Text = "欢迎你," + Session["user"].ToString().Trim();
+        login.NavigateUrl = ResolveUrl("~/Home/center/lovemu.html");
+        register.Visible = false;
+        logout.Visible = true;
+    }
+    else
+    {
+        logout.Visible = false;
+        register.Visible = true;
+    }
+}

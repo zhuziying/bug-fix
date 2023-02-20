@@ -1,0 +1,319 @@
+安卓，好像是sql语句报错了，怎么改
+
+DBHelper.java
+<code> package com.example.order;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.widget.Toast;
+
+public class DBHelper extends SQLiteOpenHelper{
+    private Context mContext;
+    public DBHelper(Context context,String name,CursorFactory factory,int version)
+    {
+        super(context,name,factory,version);
+        mContext=context;
+    }
+
+    public void onCreate(SQLiteDatabase db)
+    {
+        String DATABASE_CREATE="create table orderdetail(_id integer primary key autoincrement,orderid text,detailName text,num text,detailid text,menuid text,sate text,price text);";
+        db.execSQL(DATABASE_CREATE);
+        Toast.makeText(mContext,"创建成功!",Toast.LENGTH_LONG).show();
+    }
+
+    public void onUpgrade(SQLiteDatabase db,int arg1,int arg2)
+    {
+        String sql="DROP TABLE IF EXISTS orderdetail";
+        db.execSQL(sql);
+        this.onCreate(db);
+    }
+
+}
+
+</code>
+MainActivity.java
+<code> package com.example.order;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class MainActivity extends Activity implements OnClickListener {
+    private EditText tdetailid,torderid,tmenuid,tdetailName,tnum,tsate,tprice,morderid;
+    private Button insert,search;
+    DBHelper dbHelper;
+    SQLiteDatabase db;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        dbHelper=new DBHelper(this,"orderdetail.db",null,2);
+        insert=(Button)findViewById(R.id.insert);
+        insert.setOnClickListener(this);
+        search=(Button)findViewById(R.id.search);
+        search.setOnClickListener(this);
+        tdetailid=(EditText)findViewById(R.id.et1);
+        torderid=(EditText)findViewById(R.id.et2);
+        tmenuid=(EditText)findViewById(R.id.et3);
+        tdetailName=(EditText)findViewById(R.id.et4);
+        tnum=(EditText)findViewById(R.id.et5);
+        tsate=(EditText)findViewById(R.id.et6);
+        tprice=(EditText)findViewById(R.id.et7);
+        morderid=(EditText)findViewById(R.id.et8);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+        case R.id.insert:
+            String forderid=torderid.getText().toString().trim();
+            String fdetailName=tdetailName.getText().toString().trim();
+            String fnum=tnum.getText().toString().trim();
+            String fdetailid=tdetailid.getText().toString().trim();
+            String fmenuid=tmenuid.getText().toString().trim();
+            String fsate=tsate.getText().toString().trim();
+            String fprice=tprice.getText().toString().trim();
+            db=dbHelper.getWritableDatabase();
+            db.execSQL("insert into orderdetail(forderid,fdetailName,fnum,fdetailid,fmenuid,fsate,fprice) values(?,?,?,?,?,?,?)",new String[]{forderid,fdetailName,fnum,fdetailid,fmenuid,fsate,fprice});
+            Toast.makeText(this, "添加成功!", Toast.LENGTH_LONG).show();
+            break;
+        case R.id.search:
+            String norderid=morderid.getText().toString().trim();
+            Bundle data=new Bundle();
+            Cursor curso = dbHelper.getReadableDatabase().rawQuery("select * from orderdetail where orderID="+norderid,null );
+            List<OrderDetail> OrderList = new ArrayList<OrderDetail>();
+            while(curso.moveToNext()){
+                int detailid = curso.getInt(curso.getColumnIndex("orderdetialid"));
+                String orderid = curso.getString(curso.getColumnIndex("orderID"));
+                int menuid = curso.getInt(curso.getColumnIndex("menuid"));
+                String detailName = curso.getString(curso.getColumnIndex("detailName"));
+                int num = curso.getInt(curso.getColumnIndex("quantity"));
+                int sate = curso.getInt(curso.getColumnIndex("detailsate"));
+                int price =curso.getInt(curso.getColumnIndex("price"));
+                OrderDetail od = new OrderDetail(detailid,orderid,menuid,detailName,num,sate,price);
+                OrderList.add(od);
+            }
+
+            data.putSerializable("orderid",norderid );
+            Intent intent=new Intent(MainActivity.this,OrderActivity.class);
+            intent.putExtras(data);
+            startActivity(intent);
+            break;
+        default:break;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+}
+
+</code> 
+----------------------------------------------------------------------------------------------------
+OrderActivity.java
+<code> package com.example.order;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import android.app.Activity;
+import android.app.Instrumentation;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.TextView;
+
+public class OrderActivity extends Activity {
+    private ListView listView;
+    public Cursor cursor;
+    DBHelper dbHelper;
+    SQLiteDatabase db;
+    ArrayList<HashMap<String, Object>> Order = new ArrayList<HashMap<String, Object>>();
+    public String getorderid;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_order);
+        Intent intent = getIntent();
+        final String orderid = intent.getStringExtra("orderid");
+        getorderid=orderid;
+        Log.i("orderid:", getorderid);
+
+        List<OrderDetail> OrderList = getListItems();
+        listView = (ListView) findViewById(R.id.LVorderList);
+        OrderAdapter adapter = new OrderAdapter(this, OrderList);
+        listView.setAdapter(adapter);
+
+        Button submit =(Button)findViewById(R.id.BTorderSubmit);
+        Button back = (Button)findViewById(R.id.BTorderBack);
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread() {
+                    public void run() {
+                        Instrumentation inst = new Instrumentation();
+                        inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+                    }
+                }.start();
+            }
+        });
+    }
+
+    public List<OrderDetail> getListItems() {
+        dbHelper = new DBHelper(this,"orderdetail.db",null,2);
+        db = dbHelper.getWritableDatabase();
+        cursor = db.rawQuery("select * from orderdetail where orderID="+getorderid,null );
+        List<OrderDetail> OrderList = new ArrayList<OrderDetail>();
+        while(cursor.moveToNext()){
+            int detailid = cursor.getInt(cursor.getColumnIndex("orderdetialid"));
+            String orderid = cursor.getString(cursor.getColumnIndex("orderID"));
+            int menuid = cursor.getInt(cursor.getColumnIndex("menuid"));
+            String detailName = cursor.getString(cursor.getColumnIndex("detailName"));
+            int num = cursor.getInt(cursor.getColumnIndex("quantity"));
+            int sate = cursor.getInt(cursor.getColumnIndex("detailsate"));
+            int price =cursor.getInt(cursor.getColumnIndex("price"));
+            OrderDetail od = new OrderDetail(detailid,orderid,menuid,detailName,num,sate,price);
+            OrderList.add(od);
+            Log.i("od"," detailid:"+detailid+" orderid:"+orderid+" menuid:"+menuid+" detailName:"+detailName+ " num:" +num+ " sate:" +sate+" price:"+price);
+        }
+        return OrderList;
+    }
+
+public class OrderAdapter extends BaseAdapter {
+     private Context context;
+    private ArrayList<OrderDetail> orderdetaillist;
+    private LayoutInflater listContainer;
+
+    public OrderAdapter(Context context, List<OrderDetail> orderdetaillist) {
+        this.context = context;
+        listContainer = LayoutInflater.from(context);
+        this.orderdetaillist = (ArrayList<OrderDetail>) orderdetaillist;
+    }
+
+    @Override
+    public int getCount() {
+        return cursor.getCount();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return position;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+    @Override
+    public View getView(final int position, View view, ViewGroup parent) {
+
+     final int clickID = position;
+        View items = listContainer.inflate(R.layout.activity_order_items, null);
+
+        TextView name = (TextView) items.findViewById(R.id.orderItemName);
+        TextView price = (TextView) items.findViewById(R.id.orderItemPrice);
+        Button Sub = (Button) items.findViewById(R.id.BTorderNumSub);
+        final TextView num = (TextView) items.findViewById(R.id.orderItemNum);
+        Button Add = (Button) items.findViewById(R.id.BTorderNumAdd);
+        TextView state = (TextView) items.findViewById(R.id.orderState);
+        ImageButton Delete = (ImageButton) items.findViewById(R.id.IBorderItemDelete);
+
+        name.setText(orderdetaillist.get(position).getDetailName());
+        price.setText(String.valueOf(orderdetaillist.get(position).getPrice()));
+        num.setText(String.valueOf(orderdetaillist.get(position).getQuantity()));
+        state.setText(String.valueOf(orderdetaillist.get(position).getDetailsate()));
+
+        Sub.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity=num.getText().toString();
+                int newquantity=Integer.parseInt(quantity)-1;
+                num.setText(String.valueOf(newquantity<1?1:newquantity));
+                String refresh=num.getText().toString();
+                int menuid =orderdetaillist.get(clickID).getMenuID();
+                Log.i("新数量", String.valueOf(refresh));
+
+                String sql ="update orderdetail set quantity=? where menuid=? and OrderID=?";
+                db.execSQL(sql,new Object[]{refresh,menuid,getorderid});
+            }
+        });
+
+        Add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String quantity=num.getText().toString();
+                num.setText(String.valueOf(Integer.parseInt(quantity)+1));
+                String refresh=num.getText().toString();
+                int menuid =orderdetaillist.get(clickID).getMenuID();
+                Log.i("新数量", String.valueOf(refresh));
+                String sql ="update orderdetail set quantity=? where menuid=? and OrderID=?";
+                db.execSQL(sql,new Object[]{refresh,menuid,getorderid});
+            }
+        });
+        Delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int menuid =orderdetaillist.get(clickID).getMenuID();
+                orderdetaillist.remove(orderdetaillist.get(clickID));//移除数据
+                String sql ="delete from orderdetail where menuid=? and OrderID=?";
+                db.execSQL(sql,new Object[]{menuid,getorderid});
+                notifyDataSetChanged();
+            }
+        });
+
+        return items;
+    }
+}
+}
+</code>

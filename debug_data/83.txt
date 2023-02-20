@@ -1,0 +1,189 @@
+JS函数未定义 报错是缺少分号？？
+新手入门，恳请各位前辈指点，先谢谢各位了。
+目前在看韩顺平老师的js视频教程，实现鼠标移动到不同位置，以切换到相应标签页。
+代码如下，总是报错函数未定义，第九行缺少分号……
+<code><html>
+<head>
+<title>sohu</title>
+<link href="./sohu.css" type="text/css" rel="stylesheet"/>
+<script language="javascript" charset="GB2312">
+    function change(val){
+    window.alert("hha");
+    if(val=='1'){
+        div1.style.display: "";
+        div2.style.display: "none";
+        div3.style.display: "none";
+    }else if(val=='2'){
+        div2.style.display: "";
+        div1.style.display: "none";
+        div3.style.display: "none";
+    }else if(val=='3'){
+        div3.style.display: "";
+        div1.style.display: "none";
+        div2.style.display: "none";
+    }
+
+    /*
+        switch(val){
+            case '1':
+                div1.style.display: "none";
+                div2.style.display: "none";
+                div3.style.display: "none";
+                break;
+            case 2:
+                div2.style.display: "none";
+                div1.style.display: "none";
+                div3.style.display: "none";
+                break;
+            case 3:
+                div3.style.display: "none";
+                div1.style.display: "none";
+                div2.style.display: "none";
+                break;              
+        };
+        */
+    }
+</script>
+</head>
+<body>
+<div class="div_bg">
+<div id="div_left">
+<ul>
+    <li onmousemove="change('1')">广告</li>
+    <li onmousemove="change('2')">广告</li>
+    <li onmousemove="change('3')">广告</li>
+</ul>
+</div>
+<div class="div_right" id="div1">
+<ul>
+    <li><a href="">广告1广告1广告1广</a></li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+</ul>
+</div>
+<div class="div_right" id="div2" style="display: none">
+<ul>
+    <li>广告2广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+</ul>
+</div>
+<div class="div_right" id="div3" style="display: none">
+<ul>
+    <li>广告3广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+</ul>
+</div>
+</div>
+</body>
+</html> 
+</code> 
+----------------------------------------------------------------------------------------------------
+<code> <html>
+<head>
+<title>sohu</title>
+<link href="./sohu.css" type="text/css" rel="stylesheet"/>
+<script language="javascript" charset="GB2312">
+    function change(val){
+    window.alert("hha");
+    if(val=='1'){
+        div1.style.display="";
+        div2.style.display="none";
+        div3.style.display="none";
+    }else if(val=='2'){
+        div2.style.display="";
+        div1.style.display="none";
+        div3.style.display="none";
+    }else if(val=='3'){
+        div3.style.display="";
+        div1.style.display="none";
+        div2.style.display="none";
+    }
+
+
+    }
+</script>
+</head>
+<body>
+<div class="div_bg">
+<div id="div_left">
+<ul>
+    <li onmousemove="change('1')">广告</li>
+    <li onmousemove="change('2')">广告</li>
+    <li onmousemove="change('3')">广告</li>
+</ul>
+</div>
+<div class="div_right" id="div1">
+<ul>
+    <li><a href="">广告1广告1广告1广</a></li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+</ul>
+</div>
+<div class="div_right" id="div2" style="display: none">
+<ul>
+    <li>广告2广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+</ul>
+</div>
+<div class="div_right" id="div3" style="display: none">
+<ul>
+    <li>广告3广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+    <li>广告1广告1广告1广</li>
+</ul>
+</div>
+</div>
+</body>
+</html> 
+</code>

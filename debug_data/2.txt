@@ -1,0 +1,48 @@
+在想能不能把c++命名空间的名称开成数组型
+最近比较困扰一个问题 就是在能不能把命名空间的名字开成数组型
+比如说我定义了两个命名空间  namespace solar0 和 namespace solar1
+然后在一个函数中使用 比如说在函数 void system(int k) 中选择性使用
+比如 
+<code>void system(int k)
+{
+    if(k==0) using namespace solar0;
+    if(k==1) using namespace solar1;
+    .........
+}
+</code>
+但是我一旦用if 编译器就给我报错 说下面的对象未定义（下面的对象我在命名空间里定义了）
+然后我就想啊，能不能把solar开成数组 变成solar[2] 就是不会搞
+比如
+<code>void system(int k)
+{
+    using namespace solar[k];
+    .........
+}
+</code>
+再一次失败..
+而且我也不知道 这个名字solar是一个什么类型，指针也没法指
+有考虑过用 #define solar(k) solar##k  结果编译的时候变成solark了 
+不是想要的:当k=0时候出现solar0
+于是就纠结了....
+各位大侠们求帮助啊.... 小弟在读高三.. 
+----------------------------------------------------------------------------------------------------
+<code>#include <iostream>
+namespace myspace1
+{
+    int bj=15;
+}
+namespace myspace2
+{
+    int i=20;
+}
+#define paster( n ) using namespace myspace##n
+
+int main()
+{
+        paster( 1 );
+        std::cout<<bj<<std::endl;
+    return 0;
+}
+</code>
+我在VS2010上可以运行啊...
+但是不知道你为什么你要以这种方式用命名空间...很容易混淆的...然后就空间污染了...

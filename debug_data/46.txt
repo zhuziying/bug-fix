@@ -1,0 +1,72 @@
+C语言指针数组查找问题
+#include
+#include
+void main()
+{
+    void input(char name[],int n);
+    void sort(char *name[],int n);
+    void print(char *name[],int n);
+    void search(char *name[],int n);
+    char *name[4];
+    int n=4;
+    input(name,n);
+    sort(name,n);
+    print(name,n);
+    search(name,n);
+}
+void input(char *name[],int n)
+{
+    int i;
+    printf("请输入4个字符串：\n");
+    for(i=0;i<n;i++)
+    {
+        name[i]=(char)malloc(4*sizeof(char));
+        gets(name[i]);
+    }
+}
+void sort(char *name[],int n)
+{
+    char *temp;
+    int i,j,k;
+    for(i=0;i
+    {
+        k=i;
+        for(j=i+1;j
+            if(strcmp(name[k],name[j])>0)
+                k=j;
+            if(k!=j)
+            {temp=name[i];name[i]=name[k];name[k]=temp;}
+    }
+}
+void print(char *name[],int n)
+{
+    int i;
+    printf("字符串排序结果：\n");
+    for(i=0;i<n;i++)
+        printf("%s\n",name[i]);
+}
+void search(char *name[],int n)
+{
+    char m;
+    scanf("%s",&m);
+}
+想补充一个search函数进行输入查找，但是不知道该怎么写，尝试写了几个但都查找失败，请各位大神指导下吧，拜托了，万分感谢！ 
+----------------------------------------------------------------------------------------------------
+楼主要这种?
+<code> void search(char *name[],int n)
+{
+    char str[32] = {0};
+    printf("请输入要查找的字符串:");
+    scanf("%s", str);
+    int i;
+    for(i = 0; i < n; i++)
+    {
+        if(strcmp(name[i], str) == 0)
+        {
+            printf("找到字符串,序号为:%d\n", i + 1);
+            return;
+        }
+    }
+    printf("未找到字符串\n");
+}
+</code>

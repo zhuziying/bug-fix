@@ -1,0 +1,132 @@
+用javascript写的字符串加密程序，用if判断程序正常，用switch出错
+大家好，这段代码实现这样的功能：
+1、用户输入全是小写字母的字符串，不支持空格和标点符号；
+2、程序将字符串中的每个字母，按字母表顺序，向后移动5位，并输出新字符串；
+<code><script type="text/javascript">
+
+  var str=prompt("请输入要加密的字符串:").split("");
+
+  var newStr=[];
+
+  var alphabet=["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
+
+  for(var n=0; n<=str.length; n++)
+
+  for(var i=0; i<=25;i++)
+
+  if(str[n]==alphabet[i])
+
+    if(i+5<=25)
+
+     newStr[n]=alphabet[i+5];
+
+  else
+
+     newStr[n]=alphabet[i+5-26];
+
+  alert("加密后的新字符串是："+newStr.join(""))
+</script>
+</code>
+上面代码可以正常运行，考虑到下一步想让程序区分大小写字母，并支持空格和标点符号，因此想用
+<code>switch(str[n]){
+   case str[n]==alphabet[i]&&i+5<=25:
+   newStr[n]=alphabet[i+5];
+
+   break;
+
+   case str[n]==alphabet[i]&&i+5>25:
+   newStr[n]=alphabet[i+5-26];
+
+  }
+</code>
+这段代码替换原代码中if判断，思路是：
+1、在switch(str[n]）语句中，程序先计算str[n]的值；
+2、比对str[n]的值符合哪一个case中的条件，然后决定程序的走向
+如果上面switch(str[n]）语句能正常运行，接下来程序就可以继续扩展，再增加一个大写的判断case，再增加一个空格及标点符号的判断case
+这样，这个javascript编写字符串加密程序的1.0版本就可以正式出炉了，后续会改善用户界面、由用户指定加密步长等；
+但现在恳请列位老师指点，为何用switch(str[n]）替代if语句，程序出错？出错代码如下：
+<code><script type="text/javascript">
+
+  var str=prompt("请输入要加密的字符串:").split("");
+
+  var newStr=[];
+
+  var alphabet=["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
+
+  for(var n=0; n<=str.length; n++)
+
+  for(var i=0; i<=25;i++)
+
+  switch(str[n]){
+
+    case str[n]==alphabet[i]&&i+5<=25:
+    newStr[n]=alphabet[i+5];
+
+    break;
+
+    case str[n]==alphabet[i]&&i+5>25:
+    newStr[n]=alphabet[i+5-26];
+
+  }
+
+  alert("加密后的新字符串是："+newStr.join(""));
+
+</script>
+</code>
+补充说明，一本封皮画犀牛的书中提到，javascript中的switch有别于其他语言，因此case后面最好是常量，但没有说不可以是表达式，难道说case真的不能完成计算后面表达式的值，在与switch()中参数比对？ 
+----------------------------------------------------------------------------------------------------
+<code><script type="text/javascript">
+
+ var str = prompt("请输入要加密的字符串:").split("");
+
+ var newStr = [];
+ //小写字母表
+ var smallAlphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+  //大写字母表
+  var capitalAlphabet=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","V","U","W","X","Y","Z"];
+
+
+ for (var n=0; n < str.length; n++)
+ loop_1:  
+ for (var i=0; i<=25; i++)
+
+ switch (true) {
+
+     case str[n] == smallAlphabet[i] && i+5<=25:
+
+     newStr[n] = smallAlphabet[i+5]; 
+
+         break loop_1  ;
+
+
+     case str[n] == smallAlphabet[i] && i+5 >25:
+
+     newStr[n] = smallAlphabet[i+5-26];
+
+         break loop_1  ;
+
+     case str[n] == capitalAlphabet[i] &&i+5 <= 25:
+
+     newStr[n] = capitalAlphabet[i+5];
+
+         break loop_1 ;
+
+     case str[n] == capitalAlphabet[i] && i+5 >25:
+
+     newStr[n] = capitalAlphabet[i+5-26];
+
+         break loop_1  ;
+     //如果str[]既不在小写字母表中,也不在大写字母表中
+     case str[n]!=smallAlphabet[i]&&str[n]!=capitalAlphabet[i]:
+
+     newStr[n]=str[n];    
+
+         break;
+
+  }
+
+alert("加密后的新字符串是:" + newStr.join(""));
+
+</script>
+</code>
+问题不是你那段代码写错了,而是被执行了太多次了你可以试试直接输入一个z,它就会正常显示,在你之前的代码里break只是跳出选择但并没有跳出循环,这样你最后那段代码在每次里层循环会被执行25次,这样你前面得到的结果就被后面的覆盖掉了,所以效果就是没有加密成功。打个比方 当你输入a的时候,第一次会被第一个case执行newStr[0]=f,但是它跳出了switch而没有跳出循环,这样就会继续循环下去,当进行第二次判断的时候a就满足了最后那行代码这时候newStr[0]原来的值就被重新覆盖掉了又变回了a,所以你最后得到的结果还是a,除非你输入的是z他最后一次执行的时候会被第一个case执行从而在最后一次被覆盖成正确的值,你之前不是问过有关console.log()的使用么,用它查看每次循环后newStr[n]的值这样你就能知道错在哪了。我改的这个代码的目的是让他在找到对应的case(除最后一个)后就跳出里层的循环这样得到的结果就不会被覆盖掉了

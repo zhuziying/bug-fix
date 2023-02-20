@@ -1,0 +1,21 @@
+刚学c#就碰到问题了，要怎么破？
+<code>namespace N1
+</code>
+{
+    class A
+    {
+        public void Myls()
+        {
+            Console.WriteLine("用一生下载你");
+            Console.ReadLine();
+        }
+<code>}
+</code>
+}
+明明是按课本那样敲的为什么提示我说上下文名称中不存在：Console 
+----------------------------------------------------------------------------------------------------
+public static void Main(string[] arge)
+{
+Console.WriteLine("用一生下载你");
+Console.ReadLine();
+}

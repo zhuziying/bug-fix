@@ -1,0 +1,61 @@
+求助，为啥结果全是错的
+#include
+#define N 10
+int main()
+{
+    float score[N],Maxscore=0,Minscore=0,sum=0,ave;
+    int Num[10],Maxnum,Minnum,i;
+    for(i=0;i
+    {
+        printf("请输入第%d个学生的学号和成绩:\n",i+1);
+        scanf("%d,%f",&Num[i],&score[i]);
+        sum=sum+Num[i];
+        if(score[i]>Maxscore)
+        {
+            Maxscore=score[i];
+            Maxnum=Num[i];
+        }
+        else if(score[i]<Minscore)
+        {
+            Minscore=score[i];
+            Maxnum=Num[i];
+        }
+        }
+        ave=sum/10;
+        printf("平均分为%d,最高分及其学分为%f,%d,最低分及其学分为%f,%d\n",ave,Maxscore,Maxnum,Minscore,Minnum);
+        return 0;
+    }
+题目是依次输入十个学生的成绩和学号，求平均分和最高分和对应的学号以及最低分和对应的学号。我这为啥会这样…… 
+----------------------------------------------------------------------------------------------------
+好几个错误:
+1.Minscore应该设一个很大的初始值,或者i==0的时候将这个值赋值给Minscore
+2.sum=sum+Num[i];应该是sum = sum + score[i];
+3.else if(score[i]<Minscore)里Minnum = Num[i];写成了Maxnum=Num[i];
+4.printf("平均分为%d,最高分及其学分为%f,%d,最低分及其学分为%f,%d\n",ave,Maxscore,Maxnum,Minscore,Minnum);应该是printf("平均分为%f,最高分及其学分为%f,%d,最低分及其学分为%f,%d\n",ave,Maxscore,Maxnum,Minscore,Minnum);
+<code> #include<stdio.h>
+#define N 10
+int main()
+{
+    float score[N], Maxscore = 0, Minscore = 9999999, sum = 0, ave;
+    int Num[N], Maxnum, Minnum, i;
+    for (i = 0; i<N; i++)
+    {
+        printf("请输入第%d个学生的学号和成绩:\n", i + 1);
+        scanf("%d,%f", &Num[i], &score[i]);
+        sum = sum + score[i];
+        if (score[i]>Maxscore)
+        {
+            Maxscore = score[i];
+            Maxnum = Num[i];
+        }
+        else if (score[i]<Minscore)
+        {
+            Minscore = score[i];
+            Minnum = Num[i];
+        }
+    }
+    ave = sum / N;
+    printf("平均分为%f,最高分及其学分为%f,%d,最低分及其学分为%f,%d\n", ave, Maxscore, Maxnum, Minscore, Minnum);
+    return 0;
+}
+</code>

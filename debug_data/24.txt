@@ -1,0 +1,89 @@
+Android中关于读取JSON数组的问题
+我在读取一个JSON数组：
+<code>JSONArray jArray = new JSONArray(jsonString);
+
+        System.out.println("*****JARRAY*****"+jArray.length());
+        for(int i=0;i<jArray.length();i++){
+
+
+                JSONObject json_data = jArray.getJSONObject(i);
+                Log.i("log_tag","_id"+json_data.getInt("account")+
+                        ", mall_name"+json_data.getString("name")+
+                        ", location"+json_data.getString("number")+
+                        ", telephone"+json_data.getString("url")+
+                        ",----"+json_data.getString("balance")+
+                        ",----"+json_data.getString("credit")+
+                        ",----"+json_data.getString("displayName")
+                );
+
+        }
+</code>
+JSON语法文件的案例如下：
+<code><code>
+
+{
+    "list": [
+        {
+            "account": 1,
+            "name": "card",
+            "number": "xxxxx xxxx xxxx 2002",
+            "url": "http://www.google.com",
+            "balance": 1.0,
+            "credit": 1.0,
+            "displayName": "hsbc bank" 
+        },
+        {
+            "account": 2,
+            "name": "card2",
+            "number": "xxxxx xxxx xxxx 3003",
+            "url": "http://www.google.com",
+            "balance": 2.0,
+            "credit": 2.0,
+            "displayName": "nsb bank" 
+        } 
+    ],
+    "count": 2
+}
+
+</code>
+</code>
+语法前面都有一个花括号。当我执行这些代码块时，系统会报错说：
+<code>A JSONArray text must start with '[' at character 1 of....
+</code>
+有谁遇见过这样的问题吗？能提供案例的代码块更好，不胜感激~~ 
+----------------------------------------------------------------------------------------------------
+<code><string name="json_array">
+    {"calendar": 
+        {"calendarlist": 
+            [ 
+            {"calendar_id":"1705","title":"(\u4eb2\u5b50)ddssd","category_name":"\u9ed8\u8ba4\u5206\u7c7b","showtime":"1288927800","endshowtime":"1288931400","allDay":false}, 
+            {"calendar_id":"1706","title":"(\u65c5\u884c)","category_name":"\u9ed8\u8ba4\u5206\u7c7b","showtime":"1288933200","endshowtime":"1288936800","allDay":false} 
+            ] 
+        } 
+    }  </string>
+</code>
+解析代码:
+<code>public void parseJsonArray(String string){
+    try {
+        JSONObject jsonObject = new JSONObject(string).getJSONObject("calendar");
+        JSONArray jsonArray = jsonObject.getJSONArray("calendarlist");
+        StringBuffer sb = new StringBuffer();
+        for(int i = 0;i < jsonArray.length();i ++){
+            JSONObject json = (JSONObject) jsonArray.opt(i);
+            String calendar_id = json.getString("calendar_id");
+            String title = json.getString("title");
+            String category_name = json.getString("category_name");
+            String showtime = json.getString("showtime");
+            String endshowtime = json.getString("endshowtime");
+            String allDay = json.getString("allDay");
+            sb.append("calendar_id: " + calendar_id + "\n\n" + "title: " + title + "\n\n" + 
+                    "category_name: " + category_name + "\n\n" + "showtime: " + showtime + "\n\n" + 
+                    "endshowtime: " + endshowtime + "\n\n" + "allDay: " + allDay + "\n\n" + 
+                    "-------------------------------------\n\n");
+        }
+        text.setText(sb.toString());
+    } catch (JSONException e) {
+        e.printStackTrace();
+    }
+}
+</code>

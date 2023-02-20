@@ -1,0 +1,45 @@
+C# WINFORM 在datagridview里修改数据出现问题 
+datagridview绑定数据库，在其中直接修改数据时候，第一次可以修改成功，但是如果进行多次修改就会无法修改数据。恳请高手解答，相关代码如下：
+private DataTable DT = new DataTable(); //全局变量
+private SqlDataAdapter SDA = new SqlDataAdapter();
+// #region 载入datagridview数据(Page1)
+        public void dataload_P1()
+        {
+            SqlConnection conn = new SqlConnection(Globle.connectstring);
+            SqlCommand SCD = new SqlCommand("select * from work_project", conn);
+            SDA.SelectCommand = SCD;
+            SDA.Fill(DT);
+            dataGridView1.DataSource = DT;
+        }
+        #endregion
+private void button2_Click(object sender, EventArgs e)  //修改按钮事件
+        {
+            update_datagridview(SDA,DT);
+        }
+//#region   在datagridview中直接修改数据，使用Update更新数据库
+        public void update_datagridview(SqlDataAdapter SDA0,DataTable DT0)
+        {
+            try
+            {
+                SqlCommandBuilder SCB =  new SqlCommandBuilder(SDA0);
+                SDA0.Update(DT0);
+                MessageBox.Show("更新成功!");
+<code>        }
+        catch (System.Exception ex)
+        {
+            MessageBox.Show(ex.ToString());             
+        }          
+    }
+    #endregion
+</code> 
+----------------------------------------------------------------------------------------------------
+public void dataload_P1()
+ {
+ SqlConnection conn = new SqlConnection(Globle.connectstring);
+ SqlCommand SCD = new SqlCommand("select * from work_project", conn);
+ SDA.SelectCommand = SCD;
+ SDA.Fill(DT);
+ dataGridView1.DataSource = DT;
+dataGridView1.DataBind();
+ }
+这句话没写dataGridView1.DataBind();

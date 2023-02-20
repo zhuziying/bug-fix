@@ -1,0 +1,83 @@
+c++调用python 无结果返回问题，求教！
+问题描述：
+程序执行至调用函数前都没有错误，但返回的结果为空，即pReturn为空。想请教各位这是什么原因？另外，在释放python对象指针代码处，VS2010编译报错（之前灰掉这块了）：
+“ 无法解析的外部符号 imp_Py_Dealloc，该符号在函数 main 中被引用
+1>TT.obj : error LNK2019: 
+无法解析的外部符号 __imp__Py_NegativeRefcount，该符号在函数 main 中被引用
+1>TT.obj : error LNK2001: 无法解析的外部符号 __imp__Py_RefTotal”
+请大神指点！以下是代码块。
+python代码
+<code>  #-*- coding:gb2312 -*-
+def hello(a,b) :
+    return a+b
+</code>
+c++代码
+<code> #include<iostream>
+#include<Python.h>
+using namespace std;
+int main()
+{
+    Py_Initialize();//使用python之前，要调用Py_Initialize();这个函数进行初始化
+    PyObject * pModule = NULL;//声明变量
+
+    PyObject * pFunc = NULL;// 声明变量
+    PyObject *pDict = NULL;
+    PyObject *pArgs = NULL;
+    pModule =PyImport_ImportModule("test_call");//这里是要调用的文件名
+    if ( !pModule )
+    {
+        printf("can't find pytest.py");
+        getchar();
+        return -1;
+    }
+
+    pDict = PyModule_GetDict(pModule);
+    //pFunc= PyObject_GetAttrString(pModule, "hello");//这里是要调用的函数名
+    pFunc = PyDict_GetItemString(pDict, "hello");
+
+    if ( !pFunc || !PyCallable_Check(pFunc) )
+    {
+        printf("can't find function [hello]");
+        getchar();
+        return -1;
+    }
+
+    pArgs = Py_BuildValue("i",3);
+    pArgs = Py_BuildValue("i",4);
+
+    PyObject *pReturn = NULL; 
+    pReturn = PyEval_CallObject(pFunc, pArgs);//调用函数
+
+    if(!pReturn)
+    {
+        cout<<"null.\n";
+        return -1;
+    }
+
+    int result = -1;  
+    if (pReturn && PyArg_ParseTuple(pReturn,"i", &result))
+    {
+        cout << "3+4 = " << result << endl;
+    }  
+
+    Py_DECREF(pModule);
+    Py_DECREF(pFunc);
+    Py_DECREF(pDict);
+    Py_DECREF(pArgs);
+
+    Py_Finalize();//调用Py_Finalize，这个根Py_Initialize相对应的。
+
+     return 0;
+}
+</code> 
+----------------------------------------------------------------------------------------------------
+<code> #!/usr/bin/python
+ #coding:utf-8
+
+ def hello(a,b):
+                return a+b
+if __name__ == '__main__':
+                c=hello(a,b)
+                assert(c == a+b)
+
+</code>

@@ -1,0 +1,28 @@
+python中的os.walk函数为什么遍历带有中文的路径时就失败？
+python中的os.walk函数遍历带有中文的路径时报错如下：
+<code> Traceback (most recent call last):
+ File "/usr/lib/python2.7/threading.py", line 810, in__bootstrap_inner
+   self.run()
+ File "Store.py", line 79, in run
+   dir_production_list =FileOperation.visitDir_walk(self.conf.sProductionInputPath , ".mp4")
+ File "/home/chaoma/superboard/Store/FileOperation.py", line55, in visitDir_walk
+    for root,dirs,files in os.walk(path):
+ File "/usr/lib/python2.7/os.py", line 284, in walk
+   if isdir(join(top, name)):
+ File "/usr/lib/python2.7/posixpath.py", line 80, in join
+   path += '/' + b
+UnicodeDecodeError:'utf8' codec can't decode byte 0xb3 in position 1: invalid start byte
+</code>
+我已经加上了:
+
+- coding:utf-8 -
+
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
+还是没用
+另外我想问各位大神们一下:os.walk()中传入的路径是str类型的字符串还是unicode类型的，或者说两个类型都可以。
+十分感谢，希望大神们指点一二。 
+----------------------------------------------------------------------------------------------------
+确实没有直接说是不是str,但是仔细从上下文来分析,是可以判断出是str类型的,在- coding:utf-8 -下,你用如下的方式遍历是没问题的:
+os.walk(u'E:\中文路径'.encode('gbk'))

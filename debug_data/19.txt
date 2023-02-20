@@ -1,0 +1,65 @@
+javascript在css样式中获取样式
+<code> <link href="beijingyangse.css"  rel="stylesheet" type="text/css" />
+</head>
+<script type="text/javascript">
+ /*本函数的功能是判断浏览器的内核*/
+    function chank(enval)
+    {
+        var enval = enval.value;
+        if(window.XMLHttpRequest)
+        { 
+            //火狐版的内核
+            if(!window.ActiveXobject)
+            {
+                var abst = document.styleSheets[0].cssRules;
+                var style1 = abst[0];
+                change(style1,enval)
+            }
+            //ie版的内核
+            else
+            {
+                var abst = document.styleSheets[0].rules;
+                var style1 = abst[0];
+                change(style1,enval);
+            }
+        }       
+   }
+/*本函数的功能是完成背景颜色的改变*/
+ function change(style1,enval)
+ {
+    if(enval=="黑色")
+    {
+        style1.style.backgroundColor="black");
+    } 
+    else if(enval=="黄色")
+    {
+       style1.style.backgroundColor="#FF99FF";
+    }  
+}      
+</script>
+<body>
+    <div class="style1"></div>
+        <input type="button" value="黑色"  onclick="chank(this)"/>
+        <input type="button" value="黄色"  onclick="chank(this)"/>
+</body>
+</code>
+背景颜色不改变是怎么回事那写错了帮忙改一下万分感希望。。。。 
+----------------------------------------------------------------------------------------------------
+语法错误,change是针对dom对象,你要改css参考这个:javascript修改css级联样式表中样式
+<code> <script type="text/javascript">
+    function change(style1,enval)
+    {
+        if(enval=="黑色")
+        {
+            style1.style.backgroundColor="black"/////);//多了括号
+        }
+        else if(enval=="黄色")
+        {
+            style1.style.backgroundColor="#FF99FF";
+        }
+    }
+</script>
+    <div class="style1" id="style1">bbb</div>
+    <input type="button" value="黑色" onclick="change(document.getElementById('style1'), this.value)" />
+    <input type="button" value="黄色" onclick="change(document.getElementById('style1'), this.value)" />
+</code>

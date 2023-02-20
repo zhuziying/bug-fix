@@ -1,0 +1,148 @@
+C语言完成链表Merge_L(LinkList La,LinkList Lb,LinkList &Lc) 函数
+Status Merge_L(LinkList La,LinkList Lb,LinkList &Lc)
+功能：已知两个非递减有序单链表La、Lb，编写程序实现将La、Lb合并成一个非递减有序单链表Lc，同时置La，Lb为空表。
+返回值：成功返回Ok；否则，返回Error。
+注：Lc的值不可用，必须初始化
+下面是网上给的答案：
+Status  Merge_L(LinkList  La,LinkList  Lb,LinkList  &Lc)  {
+        LinkList  p1  =  La;
+        LinkList  p2  =  Lb;
+        ElemType*  et;    ElemType  e;
+        int  length1  =  0,length2  =  0;
+        while(p1->next)    {
+                p1  =  p1->next;
+                    length1++;
+        }
+        while(p2->next)  {
+                p2  =  p2->next;
+                length2++;
+        }
+        et  =  (ElemType  )malloc((length1  +  length2)  *  sizeof(ElemType));
+        while(!et)    {
+                et  =  (ElemType  *)malloc((length1  +  length2)  *  sizeof(ElemType));
+        }
+        p1  =  La;
+        p2  =  Lb;
+        int  x  =  0;
+        while(p1->next)    {
+                et[x]  =  p1->next->data;
+                p1  =  p1->next;
+                x++;
+        }
+        while(p2->next)    {
+                et[x]  =  p2->next->data;
+                p2  =  p2->next;
+                x++;
+        }
+        int  y;
+        for(x  =  1;  x  <  length1  +  length2;  x++)    {
+                for(y  =  0;y  <  (length1  +  length2  -  x);  y++)      {
+                        if  (et[y].num  >  et[y  +  1].num)        {
+                                e  =  et[y];
+                                et[y]  =  et[y  +  1];
+                                et[y  +  1]  =  e;
+                        }
+                }
+        }
+        Lc  =  (LinkList)malloc(sizeof(LNode));
+        if(!Lc)    {      return  Error;    }
+        p2  =  Lc;
+        for(y  =  0;  y  <  length1  +  length2;  y++)    {
+                p1  =  (LinkList)malloc(sizeof(LNode));
+                p2->next  =  p1;
+                p2  =  p1;
+                p2->data  =  et[y];
+        }
+        p2->next  =  NULL;
+        if(length1  >  0)  {
+                p1  =  La->next->next;
+                p2  =  La->next;
+                La->next  =  NULL;
+                while(!p2)      {
+                        free(p2);
+                        p2  =  p1;
+                        if(p1)        {
+                        p1  =  p1->next;
+                        }
+                }
+        }
+        if(length2  >  0)    {
+                p1  =  Lb->next->next;
+                p2  =  Lb->next;
+                Lb->next  =  NULL;
+                while(!p2)      {
+                        free(p2);
+                        p2  =  p1;
+                        if(p1)      {
+                                p1  =  p1->next;
+                        }
+                }
+        }
+        return  Ok;
+}
+自己写的：
+//(3)//
+/*Status  Merge_L(LinkList  La,LinkList  Lb,LinkList  &Lc)  {
+    p = La->next;
+    q = Lb->next;
+    La->next = NULL;
+    Lb->next = NULL;
+    Lc  = (LinkList)malloc(sizeof(LNode));
+    if(!Lc) return Error;
+    Lc->next = NULL;
+    r = Lc;
+    if(!p && !q) return Error;
+    LNode *s;
+    if(p && !q) Lc = La; return Ok;
+    if(!p && q) Lc = Lb; return Ok;
+    while(p && q){
+        if(p->data.num <= q->data.num){
+            s = p;
+            s->next = NULL;
+            r->next = s;
+            r = r->next;
+            p = p->next;
+        }
+        else{
+            s =q;
+            s->next = NULL;
+            r->next = s;
+            q = q->next;
+        }
+    }
+    return Ok;
+}/
+自己写的上传到评测系统错误，不知道哪里错了。
+还有感觉网上那个答案太复杂了，有更简单的方法吗。 
+----------------------------------------------------------------------------------------------------
+对于链表a和b,要归并到链表c,
+首先创建一个空链表c,设置两个指针ptra,ptrb分别指向a和b的第一个元素节点:
+while(ptra->element&&ptrb->element){
+    if(ptra->element>ptrb->element){
+        c->element=ptrb->element;
+        ptrb++;
+        c=c->next;
+    }
+    else if(ptra->elementelement){
+        c->element=ptra->element;
+        ptra++;
+        c=c->next;
+    }
+    else{
+        c->element=ptra->element;
+        ptra++;
+        ptrb++;
+        c=c->next;
+    }
+}
+if(ptra->element){
+    c->element=ptra->element;
+    ptra++;
+    c=c->next;
+}
+else if(ptrb->element){
+    c->element=ptrb->element;
+    ptrb++;
+    c=c->next;
+}
+这是核心的那段代码,自己慢慢研究吧,不会再问

@@ -1,0 +1,20 @@
+我想在执行注册前先查询数据表里用户名出现的次数，如果次数不为0则给提示
+我想在执行注册前先查询数据表里用户名出现的次数，如果次数不为0则给提示，不执行之后的操作，但是查询次数的语句好像出错了，求大神
+String sql2="select count(*) from table where column='name'";
+    PreparedStatement pst2=conn.prepareStatement(sql2);
+    if(count!=0){
+        session.setAttribute("errmsg2", "用户名已存在，请重新输入");
+    }else{
+    } 
+----------------------------------------------------------------------------------------------------
+<code>    String sql2="select count(*) from table where column=?";
+    PreparedStatement pst2=conn.prepareStatement(sql2);
+    pst2.setString(1,name);
+    ResultSet res = pst2.executeQuery();
+    ResultSetMetaData rsmd = res.getMetaData();
+    int count = res.getInt(1);
+    if(count!=0){
+        session.setAttribute("errmsg2", "用户名已存在,请重新输入");
+    }else{
+    }
+</code>

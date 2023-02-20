@@ -1,0 +1,50 @@
+出现错误：SQLiteException: no such table: tabella (code1)
+在访问数据库的时候， LogCat应用中出现错误：
+SQLiteException: no such table: tabella (code1)
+不知道原因在那儿啊，请帮忙。
+SQLiteOpenHelper代码：
+<code>public class DatabaseHelper extends SQLiteOpenHelper {
+    private static final String CREATE_DB_SQL = "CREATE TABLE tabella (_id INTEGER     PRIMARY KEY AUTOINCREMENT, colonna1 TEXT, colonna2 TEXT, colonna3 TEXT);";
+    public DatabaseHelper(Context context) {
+    super(context, "basedati", null, 1);
+    }
+
+    @Override
+public void onCreate(SQLiteDatabase db) {
+
+        db.execSQL(CREATE_DB_SQL);
+        ContentValues cv = new ContentValues (3);
+        cv.put("colonna1", "valore colonna 1");
+        cv.put("colonna2", "valore colonna 3");
+        cv.put("colonna3", "valore colonna 3");
+        db.insert("tabella", "colonna1", cv);
+}
+
+@Override
+    public void onUpgrade(SQLiteDatabase db, int arg1, int arg2) {
+        db.execSQL("DROP TABLE IF EXISTS tabella");
+        onCreate(db);   
+    }
+}
+</code>
+在activitiy中用来连接数据库的代码：
+<code>public class MainActivity extends Activity {
+    private DatabaseHelper db=null;
+    private Cursor constantsCursor=null;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        db = new DatabaseHelper(this);
+
+        constantsCursor=db.getReadableDatabase().rawQuery("SELECT colonna1 FROM  tabella ORDER BY colonna1", null);
+        }
+}
+</code> 
+----------------------------------------------------------------------------------------------------
+不能只改变Java的<code>CREATE_DB_SQL</code>,还要更新SQL:
+<code>public DatabaseHelper(Context context) {
+    super(context, "basedati", null, 2); // Change the number to two 
+}
+</code>

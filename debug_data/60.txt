@@ -1,0 +1,25 @@
+C#简单问题，C# if语句的代码也进行计算吗?
+为什么下面代码的运行结果是a=4  b=1
+a=4  b=1
+条件语句也进行运算吗?
+using System;
+using System.Collections.Generic;
+using System.Text;
+namespace 例3_04
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int a = 3, b = 2;
+            if (a > b && a++ > b--)
+                Console.WriteLine("a={0}  b={1}", a, b);
+            if (a > b || a-- > b++)
+                Console.WriteLine("a={0}  b={1}", a, b);
+            Console.ReadKey();
+        }
+    }
+} 
+----------------------------------------------------------------------------------------------------
+if (a > b && a++ > b--):相当于执行if(a>b && a>b)再a++;b--;因此比较成立,并且a变为3,b变为1
+第二个 if (a > b || a-- > b++)中,|| 前的 a>b 成立,则if条件一定为true,|| 后语句不再执行,因此a--和b++未进行运算

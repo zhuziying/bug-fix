@@ -1,0 +1,47 @@
+关于PHP cookies，网页无法结果
+最近我在学习PHPcookies碰到如下问题：
+我写了两段简单的代码：
+c.php
+   <?php
+   session_start();
+   $sid=SID;
+$_session['user']='xu';
+   $_session['password']='123';
+    echo'登录</ a>';
+?>
+d.php
+<?php
+   session_start();
+   if($_SESSION['user']=='xu'&&$_SESSION['password']=='123')
+       echo  "欢迎{$_SESSION['user']}回来";
+    else
+        echo "bye";
+?>
+我在浏览器中已经设置允许cookies，但是网页显示出来还是这个问题：
+   Notice: Undefined index: user in D:\Download\PHP\xmapp\htdocs\php12\d.php on line 3
+bye
+ 我很迷茫，希望高手能给点提示 
+----------------------------------------------------------------------------------------------------
+a.php
+<code> <?php
+session_start();
+
+$_SESSION['user']='xu';
+$_SESSION['password']='123';
+echo'登录</ a>';
+?>
+
+</code>
+b.php
+<code> <?php
+ session_start();
+if(isset($_SESSION['user'])&&isset($_SESSION['password'])){
+//此处增加isset检验
+ if($_SESSION['user']=='xu'&&$_SESSION['password']=='123')
+     echo "欢迎{$_SESSION['user']}回来";
+}
+ else
+     echo "bye";
+ ?>
+</code>
+_主要是因为5.3以上的php强制检查索引。$_SESSION['user']  _在没定义的情况下就会报notice

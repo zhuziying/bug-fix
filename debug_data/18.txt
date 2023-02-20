@@ -1,0 +1,261 @@
+初学者一个关于类的问题
+编译,链接都没有问题.没有得到想要结果,我找不出错在哪,请大家帮看看
+头文件
+<code># include <string>
+using namespace std;
+# include <iostream>
+# include <vector>
+class Animal
+{
+public:
+    Animal (const char*n): name(n) {}
+    virtual ~Animal() {}
+    virtual void read ()=0;
+protected:
+    string name;
+};
+
+class Panda:public Animal
+{
+    friend class Zoo;
+public:
+    Panda (const char*n): Animal(n) {}
+    void read ()
+    {
+        cout<<"name "<<name<<"     "
+            <<"speices panda"<<endl;
+    }
+
+};
+
+class Tiger:public Animal
+{
+    friend class Zoo;
+public:
+Tiger (const char*n): Animal(n) {}
+    void read ()
+    {
+        cout<<"name "<<name<<"     "
+            <<"speices tiger"<<endl;
+    }
+};
+
+class Monkey:public Animal
+{
+    friend class Zoo;
+public:
+Monkey (const char*n): Animal(n) {}
+    void read ()
+    {
+        cout<<"name "<<name<<"     "
+            <<"speices monkey"<<endl;
+    }
+};
+
+class Zoo
+{
+public:
+    Zoo(): contain(0) {}
+    Zoo(int c): contain(c), room(c){}
+    void ListAnimals();
+    int Accept(Animal*);
+    void Release (int);
+    ~Zoo();
+private:
+    int contain;
+    vector<Animal*> room;
+
+};
+==================================================
+# include "Animal.h"
+using namespace std;
+
+int Zoo::Accept(Animal* one)
+{
+    vector<Animal*>::size_type i=0;
+    Animal* record =one;
+    room.push_back(record);
+    i = room.size();
+    return i;
+}
+void Zoo::Release(int p)
+{
+    room[p] = 0;
+}
+void Zoo::ListAnimals()
+{
+    int count = 0;
+    for(int i=0;i<contain;++i)
+    {
+        if(room[i] != 0)
+        {
+            room[i]->read;
+            cout<<"position "<<i<<endl;
+            ++count;
+        }
+
+    }
+    cout<<"toatl animals are "<<count<<endl;
+}
+
+Zoo::~Zoo()
+{
+    for(int j=0;j<contain;++j)
+    {
+        if(room[j]!=0)
+        {
+            delete room[j];
+        }
+    }
+}
+</code>
+
+<code># include "Animal.h"
+using namespace std;
+
+int main()
+{
+   Panda p[1]={Panda("Rudy")};
+   Tiger t[2]={Tiger("Sam"),Tiger("Princess")};
+   Monkey m[3]={Monkey("Nancy"),Monkey("CaroLine"),Monkey("Bob")};
+
+   Zoo Z(10);               //初始化动物园对象，其最多可饲养10只动物，缺省饲养了0只动物
+   for(int i=0;i<2;i++)
+   {
+       Z.Accept(&t[i]);     //向动物园移入要饲养的动物，并返回该动物所在的位置
+       Z.Accept(&m[i]);
+   }
+   int position=Z.Accept(&p[1]); 
+   Z.ListAnimals();         //列出动物园当前饲养了多少只动物, 每只动物所在的位置及其种类和姓名
+   Z.Release(position);     //从动物园移走指定位置的动物
+   Z.ListAnimals();
+   Z.Accept(&m[2]);
+   Z.ListAnimals();
+   return 0;
+}
+</code> 
+----------------------------------------------------------------------------------------------------
+#if 1
+include 
+include 
+include 
+using namespace std;
+class Animal
+{
+public:
+    Animal(const char*n) : name(n) {}
+    virtual ~Animal() {}
+    virtual void read() = 0;
+protected:
+    string name;
+};
+class Panda :public Animal
+{
+    friend class Zoo;
+public:
+    Panda(const char*n) : Animal(n) {}
+    void read()
+    {
+        cout << "name " << name << "     "
+            << "speices panda" << endl;
+    }
+};
+class Tiger :public Animal
+{
+    friend class Zoo;
+public:
+    Tiger(const char*n) : Animal(n) {}
+    void read()
+    {
+        cout << "name " << name << "     "
+            << "speices tiger" << endl;
+    }
+};
+class Monkey :public Animal
+{
+    friend class Zoo;
+public:
+    Monkey(const char*n) : Animal(n) {}
+    void read()
+    {
+        cout << "name " << name << "     "
+            << "speices monkey" << endl;
+    }
+};
+class Zoo
+{
+public:
+    Zoo() : contain(0) {}
+    Zoo(int c) : contain(c), room(c){}
+    void ListAnimals();
+    int Accept(Animal*);
+    void Release(int);
+    ~Zoo();
+private:
+    int contain;
+    vector room;
+};
+int Zoo::Accept(Animal* one)
+{
+    vector::size_type i = 0;
+    Animal* record = one;
+    room.push_back(record);
+    i = room.size();
+    return i;
+}
+void Zoo::Release(int p)
+{
+    /*你用的vector,他是c++标准模版库的类,它提供了自己的迭代器*/
+    //room[p] = 0;
+    int i = 0;
+    for (vector::iterator iter = room.begin(); iter != room.end() && i++ <= p; iter++)
+    {
+        *iter = 0;
+    }
+}
+void Zoo::ListAnimals()
+{
+    int count = 0;
+    for (int i = 0; i
+    {
+        if (room[i] != 0)
+        {
+            room[i]->read();
+            cout << "position " << i << endl;
+            ++count;
+        }
+<code>}
+cout << "toatl animals are " << count << endl;
+</code>
+}
+Zoo::~Zoo()
+{
+    for (int j = 0; j<contain; ++j)
+    {
+        if (room[j] != 0)
+        {
+            delete room[j];
+        }
+    }
+}
+int main()
+{
+    Panda p[1] = { Panda("Rudy") };
+    Tiger t[2] = { Tiger("Sam"), Tiger("Princess") };
+    Monkey m[3] = { Monkey("Nancy"), Monkey("CaroLine"), Monkey("Bob") };
+<code>Zoo Z(10);               //初始化动物园对象,其最多可饲养10只动物,缺省饲养了0只动物
+for (int i = 0; i<2; i++)
+{
+    Z.Accept(&t[i]);     //向动物园移入要饲养的动物,并返回该动物所在的位置
+    Z.Accept(&m[i]);
+}
+int position = Z.Accept(&p[1]);
+Z.ListAnimals();         //列出动物园当前饲养了多少只动物, 每只动物所在的位置及其种类和姓名
+Z.Release(position);     //从动物园移走指定位置的动物
+Z.ListAnimals();
+Z.Accept(&m[2]);
+Z.ListAnimals();
+return 0;
+</code>
+}
+#endif

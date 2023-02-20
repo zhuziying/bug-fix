@@ -1,0 +1,38 @@
+查看根元素中的节点报出ClassCastException错误
+程序中的n2代表NodeList，我只想查看根元素中的第一个子节点。
+<code>public void ClickMe(View view){
+
+
+    Node rootElement=n2.item(0);
+    NodeList child=rootElement.getChildNodes();
+
+    Node first=child.item(0);
+    //ClassCastException error is coming whenever i am casting first to Element.
+
+    Element nm=(Element)first;
+
+    Option q= getOption(nm,first);
+    Log.i(TAG,"the name is was talking about is : "+ q.getName());
+}
+</code>
+但是 logcat报出错误
+<code>12-20 20:32:38.376: E/AndroidRuntime(2950): Caused by: java.lang.ClassCastException: org.apache.harmony.xml.dom.TextImpl cannot be cast to org.w3c.dom.Element
+</code>
+请问这是怎么回事啊？ 
+----------------------------------------------------------------------------------------------------
+使用这段代码试试:
+<code>NodeList LOP = odoc.getElementsByTagName("Your_XML_Top_Element");
+
+                Node FPN =LOP.item(0);
+                try{
+                if(FPN.getNodeType() == Node.ELEMENT_NODE)
+                    {
+
+                    Element token = (Element)FPN;
+
+                    NodeList oNameList1 = token.getElementsByTagName("Your_XML_Sub_Node");
+                    Element firstNameElement = (Element)oNameList1.item(0);
+                    NodeList textNList1 = firstNameElement.getChildNodes();
+
+}
+</code>

@@ -1,0 +1,49 @@
+如何获得一个动态创建的textview的ID？
+我想要在一个android app中动态添加和删除TextView，我现在正在做，但是我在设置和获得TextView的ID的时候碰到了困难。在最后两行代码中我好想得到了空指针异常（et settext和ll.removeView）。有人知道我怎么可以动态的设置和获得一个textview的ID么？setId似乎没有工作，还是就是我错了？
+<code>//删除无关的代码
+EditText et = (EditText) view.findViewById(R.id.edittext_tags);
+et.setText("");
+
+TextView nTv = new TextView(view.getContext()); 
+LayoutParams lparams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+
+lparams.setMargins(10, 0, 0, 0);
+nTv.setLayoutParams(lparams);   
+nTv.setId(tag_id);
+nTv.setText(str.substring(0, str.length()-1));
+nTv.setTextColor(Color.BLUE);               
+nTv.setTextSize(20);
+final LinearLayout linl = (LinearLayout) view.findViewById(R.id.linear_layout_tags);
+linl.addView(nTv);
+
+nTv.setOnClickListener(new View.OnClickListener() {         
+    public void onClick(View v) {
+
+        EditText et = (EditText) view.findViewById(R.id.edittext_tags);
+        TextView t = ((TextView)v);
+        et.setText(t.getText().toString());
+        linl.removeView(v);
+
+    }
+});
+</code> 
+----------------------------------------------------------------------------------------------------
+在layout中,TextView并不包含所有的children,但是LinearLayout有。最后,你可以在TextView的OnClickListener中用(只要视图包含layout。如果没有,可能你需要确定一下你想要做什么功能-提前做一个参考的布局可能会有效)
+<code>final LinearLayout linl = (LinearLayout) view.findViewById(R.id.linear_layout_tags);
+linl.addView(nTv);
+
+nTv.setOnClickListener(new View.OnClickListener() {         
+    public void onClick(View v) {
+        EditText et = (EditText) linl.findViewById(R.id.edittext_tags);
+        TextView t = ((TextView)v);
+        et.setText(t.getText().toString());
+        linl.removeView(v);
+    }
+</code>
+用你的方法的话,id并不是真的需要,因为你总是有一个引用的视图。
+然后,如果你想要用views的话(非常冗余的例子,但是它可以解释的更清楚):
+<code>nTv.setId(tag_id);
+linl.addView(nTv);
+
+TextView duplicateTextViewReference (TextView) linl.findViewById (tag_id);
+</code>

@@ -1,0 +1,28 @@
+c# 多线程的一个问题请各位多多指点
+小弟刚刚学习c#多线程的知识，今天测试一个简单的windows窗口程序，程序主要内容为：
+private void add_item()
+        {
+            for (int i = 0; i < 100000; i++)
+            {
+                this.listBox1.Items.Add(i.ToString() + "  aa ");
+            }
+        }
+private void button1_Click(object sender, EventArgs e)
+        {
+<code>        ThreadStart ts = new ThreadStart(add_item);
+        Thread thread = new Thread(ts);
+        thread.Start();
+
+    }
+
+在调试的时候发现如果我点击“启动调试”则程序会报跨线程调用控件的错误。如果我点击“开始执行不调试”则程序运行没问题，不知道是何原因。
+另外，如果我用委托来解决跨线程的调用的问题，在程序运行时会发现只有等add_item函数中的循环都执行完了，窗口才显示数据，点击窗口其它的按钮才有反应，感觉同单线程并无区别。如果我不用委托，利用“开始执行不调试”按钮来运行，则程序运行时，能感觉是多线程，在循环执行时我能看到数据是一项一项加上去的，并且在循环执行完毕前我点击窗口上的其它按钮是有反应的，请各位给小弟解解惑，出现以上情况的原因是什么，多谢！
+</code> 
+----------------------------------------------------------------------------------------------------
+<code>    public Form1()
+    {
+        InitializeComponent();
+        Form.CheckForIllegalCrossThreadCalls = false;
+    }
+</code>
+在构造函数里加个如上所示的一句话试试

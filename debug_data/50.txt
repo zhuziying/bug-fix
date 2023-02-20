@@ -1,0 +1,191 @@
+初学C++中类的使用，求助
+初学类的使用，在Accelerated C++上遇到编程题目如下：
+编写一个类以及相关的函数以为学生产生成绩，用P/F表示成绩
+假设只根据期中和期末成绩来计算，而且，如果一个学生的平均考试分数大于等于60的话，那这个学生及格
+输出时列出学生姓名并列出相应的成绩，成绩用P/F表示
+从data.txt读入成绩信息，将成绩输出到result.txt
+data.txt截图如下：
+以下是我的代码：
+#include
+#include
+#include
+#include
+#include
+#include
+#include
+#include
+using namespace std;
+class Student_Info
+{
+private:
+string name;
+int mid,final;
+public:
+Student_Info(): name(" "),mid(0),final(0){}; //默认构造函数
+Student_Info(string s,int x,int y);
+~Student_Info(){}
+void input(string s, int x, int y); //读入学生成绩数据
+inline string output_name(){return name;} //输出学生姓名
+inline bool pass(){return ((mid+final)>=60)?1:0;} //判断是否及格
+};
+void Student_Info::input(string s,int x,int y)
+{
+name=s;
+mid=x;
+final=y;
+}
+Student_Info::Student_Info(string s,int x,int y)
+{
+input(s,x,y);
+}
+char grade(Student_Info student)
+{
+return student.pass()?'P':'F';
+}
+int string2int(string txt)
+{
+int num;
+stringstream ss;
+ss< ss>>num;
+if(!ss.good())
+{
+cerr<<"转换失败！"<<endl;
+exit(1);
+}
+return num;
+}
+int main()
+{
+vector students;
+vector pass;
+vector temp,names;
+vector points;
+string tmp,str;
+int x,y,i=0,length=0;
+Student_Info student;
+ifstream fin("data.txt");
+ofstream fout("result.txt");
+getline(fin, tmp);
+//cout< while(getline(fin,tmp))
+{
+istringstream stream(tmp);
+while(stream>>str)
+temp.push_back(str);
+x=string2int(temp1);
+y=string2int(temp[2]);
+student.input(temp[0],x,y);
+students.push_back(student);
+pass.push_back(grade(student));
+names.push_back(student.output_name());
+temp.clear();
+}
+for(;i<names.size();i++)
+{
+if(length<names[i].size())
+length=names[i].size();
+}
+length=max(length,12);
+fout<<left<<setw(length)<<"学生姓名"<<"学生成绩"<<endl;
+for(i=0;i<names.size();i++)
+fout<<left<<setw(length)<<names[i]<<pass[i]<<endl;
+fin.close();
+fout.close();
+system("pause");
+return 0;
+}
+问题如下：
+在运行时只会瞬间弹出空的控制台并且立即退出，生成一个空的result.txt文档；在文件中添加测试语句（如以上代码所示），无输出。
+尝试逐语句调试，在main函数两处涉及Student_Info类变量的声明处发现类私有成员都没有按照默认构造函数初始化
+请问这究竟是什么原因造成的？该如何修改？ 
+----------------------------------------------------------------------------------------------------
+#if 1
+#include 
+#include 
+#include 
+#include 
+#include 
+using namespace std;
+class Student_Info
+{
+private:
+    string name;
+    int mid, final;
+public:
+    Student_Info() : name(" "), mid(0), final(0){}; //默认构造函数
+    Student_Info(string s, int x, int y);
+    ~Student_Info(){}
+    void input(string s, int x, int y); //读入学生成绩数据
+    inline string output_name(){ return name; } //输出学生姓名
+    inline bool pass(){ return ((mid + final) >= 60) ? 1 : 0; } //判断是否及格
+};
+void Student_Info::input(string s, int x, int y)
+{
+    name = s;
+    mid = x;
+    final = y;
+}
+Student_Info::Student_Info(string s, int x, int y)
+{
+    input(s, x, y);
+}
+char grade(Student_Info student)
+{
+    return student.pass() ? 'P' : 'F';
+}
+int string2int(string txt)
+{
+    int num;
+    stringstream ss;
+    ss >> num;
+    if (!ss.good())
+    {
+        cerr << "转换失败!" << endl;
+        exit(1);
+    }
+    return num;
+}
+int max(int x, int y)
+{
+    return x > y ? x : y;
+}
+int main()
+{
+    vector students;
+    vector pass;
+    vector temp, names;
+    vector points;
+    string tmp, str;
+    int x, y, i = 0, length = 0;
+    Student_Info student;
+    ifstream fin("data.txt");
+    ofstream fout("result.txt");
+    getline(fin, tmp);
+    //cout< while(getline(fin,tmp))
+    {
+        istringstream stream(tmp);
+        while (stream >> str)
+            temp.push_back(str);
+        x = string2int(temp[1]);
+        y = string2int(temp[2]);
+        student.input(temp[0], x, y);
+        students.push_back(student);
+        pass.push_back(grade(student));
+        names.push_back(student.output_name());
+        temp.clear();
+    }
+    for (; i<names.size(); i++)
+    {
+        if (length<names[i].size())
+            length = names[i].size();
+    }
+    length = max(length, 12);
+    fout << left << setw(length) << "学生姓名" << "学生成绩" << endl;
+    for (i = 0; i<names.size(); i++)
+        fout << left << setw(length) << names[i] << pass[i] << endl;
+    fin.close();
+    fout.close();
+    system("pause");
+    return 0;
+}
+#endif
+这是我修改后的代码...

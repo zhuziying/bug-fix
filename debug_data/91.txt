@@ -1,0 +1,40 @@
+如何控制a标签的跳转？
+<code> <div class="options option1">
+            <p id="a1">哈哈</p>
+            <p id="a2">嘿嘿</p>
+            <p id="a3">呵呵</p>
+</div>
+<div class="next"><a href="#page3">跳转到id=page3</a></div>
+</code>
+一个选择题，设置a标签的锚链接，选择之后点击a标签跳转到该id的部分；
+我现在想判断如果没有点击，也就是没有选择的话，点击a标签不跳转，怎么办呢？
+我是这么写的
+<code> $(function(){
+    var $ap = $(".option1 p");
+    $ap.click(function(){
+        $(this).css('background','#7B5AD6').siblings().css('background','');
+        aId = this.id;
+    })
+    if(!aId){
+        $('.next2 a').click(function(){
+            return false;
+        })
+    }
+})
+</code>
+这么写错在哪里呢，请问该怎么写呢？ 
+----------------------------------------------------------------------------------------------------
+<code> $(function(){
+    var $ap = $(".option1 p");
+    $ap.click(function(){
+        $(this).css('background','#7B5AD6').siblings().css('background','');
+        aId = this.id;
+    })
+        $('.next2 a').click(function(){//有没有选择和绑不绑定click没关系,在点击的时候处理
+                if(!aId){
+              return false;
+                        }
+                        return true;
+        })
+})
+</code>

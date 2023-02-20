@@ -1,0 +1,44 @@
+php遍历中文目录出现问题
+$path= iconv ( "UTF-8", "GBK", $path);
+if(!is_dir ( $path )){
+    echo "你输入的路径不是目录，请检查后重新输入！";
+}
+$file = opendir ( $path );
+while ( $flist = readdir ( $file ) ) {
+    // 去除.和..
+    if ($flist == '.' || $flist == '..')
+        continue;
+    $filename = $path . '/' . $flist;
+    $name = iconv ( "GBk", "UTF-8", $filename );
+    if (is_dir ( $filename )) {
+        $this->readDir ( $filename );
+    } else {
+        $filename = iconv ( "GBk", "UTF-8", $filename );
+        echo $filename ;
+    }
+}
+在win7中可以遍历中文目录，在windows server 2003 输出的是你输入的路径不是目录，请检查后重新输入！
+是什么原因 
+----------------------------------------------------------------------------------------------------
+在 Windows 上，默认的文件名编码是 GBK，而在 Unix 系统上，文件名的编码通常是 UTF-8。如果您在 Windows 下创建了一个包含中文文件名的目录，并将该目录移到了一台 Unix 系统的服务器上，那么您的 PHP 代码就可能会无法正常读取目录中的文件名。
+
+您所提供的 PHP 代码尝试使用 iconv 函数将路径转换为 GBK 编码，然后使用 opendir 函数读取目录。这在 Windows 下可能会正常工作，但是在 Unix 系统上就可能会出错。
+
+为了解决这个问题，您可以尝试使用 mbstring 扩展来读取目录。mbstring 扩展支持多种字符编码，并且可以在 Windows 和 Unix 系统之间转换文件名的编码。
+
+您可以使用 mb_convert_encoding 函数将文件名转换为 UTF-8 编码，然后使用 scandir 函数读取目录中的文件名。例如：
+<code>$path = mb_convert_encoding($path, 'UTF-8', 'GBK');
+if (!is_dir($path)) {
+    echo "你输入的路径不是目录，请检查后重新输入！";
+}
+$files = scandir($path);
+foreach ($files as $flist) {
+    if ($flist == '.' || $flist == '..') continue;
+    $filename = $path . '/' . $flist;
+    if (is_dir($filename)) {
+        $this->readDir($filename);
+    } else {
+        echo $filename;
+    }
+}
+</code>

@@ -1,0 +1,42 @@
+spring怎么获得当前的connection啊？
+在applicationContext.xml里配置datasource用的ProxoolDataSource，
+sqlmapclient配置用这个这个datasource
+出现了一个问题 就是sqlmapclient把autocommit设为false没有作用，因为想做个批处理
+我想获取spring当前sqlmapclient的connection 将它设为非自动提交，怎么做啊？
+我查到下面方法：
+通过DataSourceUtils.getConnection(DataSource）;就能获取到设置的DataSource 然后获得connection
+public static Connection getConnection()
+            throws SQLException
+    {
+        return DataSourceUtils.getConnection((DataSource)ServiceLocator.getBean("dataSource"));
+}
+但是ServiceLocator没有啊？
+用sqlMapClient.getDataSource().setAutoCommit(false) 没有用，再sqlMapClient.getDataSource().getAutoCommit();还是true！！。。。。。
+求解求解 求大神 
+----------------------------------------------------------------------------------------------------
+在 Spring 中，您可以通过注入 DataSource 或者 DataSourceTransactionManager bean 来获取当前的 Connection。
+
+首先，您可以在您的 DAO 类中注入 DataSource，然后调用 getConnection() 方法获取 Connection。这是一个示例代码：
+<code>@Autowired
+private DataSource dataSource;
+
+public void doSomething() throws SQLException {
+    Connection conn = dataSource.getConnection();
+    // use the connection to execute SQL statements
+    conn.close();
+}
+</code>
+如果您想在事务中执行批处理操作，您可以注入 DataSourceTransactionManager bean，然后使用它的 getConnection() 方法获取 Connection。这是一个示例代码：
+<code>@Autowired
+private DataSourceTransactionManager transactionManager;
+
+@Transactional
+public void doBatchUpdate() throws SQLException {
+    Connection conn = transactionManager.getConnection();
+    conn.setAutoCommit(false);
+    // use the connection to execute SQL statements in batch mode
+    conn.commit();
+    conn.close();
+}
+</code>
+注意：在使用完 Connection 后，一定要记得关闭它。

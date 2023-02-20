@@ -1,0 +1,123 @@
+怎么我的网页的Js不起作用呢？
+求解!   我的思路：JS检验，然后调用resetpwd，提交aname和apwd。问题：老按提交按钮的图片，无法执行JS。
+<code> <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<html>
+  <head>
+    <title>密码重置</title>
+    <%-- <script language="JavaScript" src="../script/trim.js"></script> --%>
+    <script language="JavaScript">
+      function check()
+      {
+        var f=document.mf1; //获取name=mf1的form对象       
+        if(f.aname.value==''){
+            alert("管理员名称不能为空!!!");
+            return false;
+        }
+        if(f.password.value==''){
+            alert("密码不能为空!!!");
+            return false;
+        }
+        if(f.password.value!=f.password.value){
+            alert("两次密码输入不一致!!!");
+            return false;
+        }
+        //测试
+        alert(f.aname.value+'\n'+f.password.value+'\n'+f.password.value);
+
+        f.submit();
+      }
+    </script>
+  </head>
+  <body bgcolor="#EBF5FD">
+    <s:action name="browseAdmininfos" executeResult="true"></s:action><!-- //获取全部用户信息 -->
+    <table width="100%" height="44" bgcolor="#206AB3">
+      <tr align="center"><td>
+        <font color="#FFFFFF" size="5">管理员管理</font>
+        <font color="#FFFFFF" size="2">--密码重置</font>
+      </td></tr>
+    </table>
+    <table>
+      <tr>
+      <td>
+        <a href="javascript:history.back()">
+            <img border="0" src="../img/back.jpg"/>
+        </a>
+      </td></tr>
+    </table>
+    <hr color="black" size="1"/>
+    <form action="resetpwd" method="post" id="mf" name="mf1">
+    <table width="80%" border="0" cellspacing="1" bgcolor="black" align="center">   
+      <tr bgcolor="white">
+        <td align="center">管理员名称:</td>
+        <td>
+          <select name="aname" id="aname">
+            <s:iterator value="#request['admininfos']" id="admininfos" status="iteratorStatus"> 
+                <option value="<s:property value="#admininfos.aname" />">
+                    <s:property value="#admininfos.aname" />
+                </option><!-- 显示管理员名称 -->
+            </s:iterator> 
+          </select>
+        </td>
+      </tr>
+      <tr bgcolor="white">
+        <td align="center">新&nbsp;密&nbsp;码:</td>
+        <td><input type="password" name="apwd" id="apwd"/></td>
+      </tr>
+      <tr bgcolor="white">
+        <td align="center">确认密码:</td>
+        <td><input type="password" name="fpwd" id="fpwd"/></td>
+      </tr>
+    </table>
+    <table align="center">
+      <tr>
+        <td><img border="0" src="../img/xg.gif" id="xg" 
+              onclick="JavaScript:check()"
+              style="cursor:hand"
+              onmouseover="document.all.xg.src='../img/xga.gif'"
+              onmouseout="document.all.xg.src='../img/xg.gif'"
+              onmouseup="document.all.xg.src='../img/xga.gif'"          
+              onmousedown="document.all.xg.src='../img/xgb.gif'"/>
+        </td><!-- 提交按钮-->
+        <td><img border="0" src="../img/cze.gif" id="cz" 
+              onclick="JavaScript:document.all.mf.reset()"
+              style="cursor:hand"
+              onmouseover="document.all.cz.src='../img/czd.gif'"
+              onmouseout="document.all.cz.src='../img/cze.gif'"
+              onmouseup="document.all.cz.src='../img/czd.gif'"          
+              onmousedown="document.all.cz.src='../img/czc.gif'"/>
+        </td><!-- 重置按钮-->
+      </tr>
+    </table>
+    </form>
+  </body>
+</html>
+</code> 
+----------------------------------------------------------------------------------------------------
+你控件的name都错了。。而且document.all只有ie支持。。改用document.getElementById
+<code>        function check() {
+            var f = document.mf1; //获取name=mf1的form对象       
+            if (f.aname.value == '') {
+                alert("管理员名称不能为空!!!");
+                return false;
+            }
+            if (f.apwd.value == '') {
+            //if (f.password.value == '') {
+                alert("密码不能为空!!!");
+                return false;
+            }
+            if(f.apwd.value!=f.fpwd.value){
+            //if (f.password.value != f.password.value) {
+                alert("两次密码输入不一致!!!");
+                return false;
+            }
+            //测试
+            alert(f.aname.value + '\n' + f.apwd.value + '\n' + f.fpwd.value);
+
+            f.submit();
+        }
+</code>

@@ -1,0 +1,125 @@
+PHP中，查询注册邮箱是否已经存在的SQL，如下为何未生效？
+问题解决了。
+关键代码：
+//查询邮箱是否重复
+<code>     $user_email = $_POST["user_email"];
+    $sql = "select count(*) from users where user_email='$user_email'";
+    $result = mysql_query($sql,$con);
+    $row = mysql_fetch_row($result);
+    if ( $row[0] > 0) 
+    {   
+        echo $row[0];
+        echo "<br/>邮箱已注册过，请直接登陆或找回密码";} 
+    else {
+        //----增加新的用户--begin
+</code>
+--------问题更新-------
+使用如下代码，然后注册时，输入数据库已经存在的邮箱，依然会注册成功。
+这是不正常的，请问问题出现在哪里？
+经过我的定位，好像“查询邮箱是否重复”的代码没有生效，请各位帮忙看下？
+<code> //查询邮箱是否重复
+    $user_email = $_POST["user_email"];
+    $sql = "select count(*) from users where user_email='$user_email'";
+    if (mysql_query($sql,$con)=='1') 
+    {echo "exist";} 
+    else {
+        //----增加新的用户--begin
+</code>
+<code> <!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>.error {color: red;}</style>
+</head>
+
+<body>
+
+<?php 
+//检查（1）邮箱、密码、昵称是否为空；（2）邮箱格式是否正确。
+global $emailErr,$passErr,$nicknameErr; 
+$emailErr = $passErr = $nicknameErr = "";
+//$user_email = $user_pass = $user_nickname = "";
+if (empty($_POST["user_email"]))        {$emailErr = "不可为空";}
+    else 
+    {
+        if (!preg_match("/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/",$_POST["user_email"])) {$emailErr = "email格式不正确";} 
+        else {$emailErr="ok";} 
+    }
+if (empty($_POST["user_pass"]))         {$passErr = "不可为空";}        else {$passErr = "ok";}
+if (empty($_POST["user_nickname"]))     {$nicknameErr = "不可为空";}    else {$nicknameErr = "ok";}
+?>
+
+<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">           
+<p>注册一个新用户^_^</p>    
+邮箱：<input type="text" name="user_email"><span class="error">*         <?php echo $emailErr;?></span><br><br>
+密码：<input type="text" name="user_pass"><span class="error">*      <?php echo $passErr;?></span><br><br>
+昵称：<input type="text" name="user_nickname"><span class="error">*  <?php echo $nicknameErr;?></span><br><br>
+      <input type="submit" name ='submit' value="注册">
+</form>
+
+
+
+
+
+<?php
+
+//判断是否需要连接数据库
+if ( isset($_POST["submit"]) && $emailErr=="ok" && $passErr == "ok" && $nicknameErr == "ok" )
+{
+//连接数据库 Kilo,20150909
+$con = mysql_connect(SAE_MYSQL_HOST_M.":".SAE_MYSQL_PORT,SAE_MYSQL_USER,SAE_MYSQL_PASS);
+$con or die ('Could not connect: ' . mysql_error());
+
+//选择数据库
+mysql_select_db(SAE_MYSQL_DB,$con);
+
+//查询邮箱是否重复
+    $user_email = $_POST["user_email"];
+    $sql = "select count(*) from users where user_email='$user_email'";
+
+    if (mysql_query($sql,$con)=='1') 
+    {echo "exist";} 
+    else {
+        //----增加新的用户--begin
+//获取当前时间戮
+$unix_timestamp=time();
+
+//插入用户注册数据
+$sql="INSERT INTO users 
+(user_email,user_pass,user_nickname,user_reg_ip,user_reg_date,user_last_log_ip,user_last_log_date,user_coins,user_rmb,user_email_status)
+VALUES
+('$_POST[user_email]','$_POST[user_pass]','$_POST[user_nickname]','$_SERVER[REMOTE_ADDR]','$unix_timestamp','$_SERVER[REMOTE_ADDR]','$unix_timestamp','0','0','0')";
+
+if (!mysql_query($sql,$con))
+  {
+  die('Error: ' . mysql_error());
+  }
+else
+{
+//echo '<br />';
+echo "注册成功！".'<br/><br/>';
+echo "很高兴遇见你，".$_POST["user_nickname"].'<br/>'; 
+    $url='/login.php';
+echo "<a href=$url>点此登陆吧</a>";
+
+//断开数据库连接
+mysql_close($con);
+}
+        }
+        //----增加新的用户--end
+
+
+}    else echo "<br/>:( 失败了，请修改~";
+
+
+?>
+
+
+</body>
+</html>
+</code> 
+----------------------------------------------------------------------------------------------------
+<code> $sql = "SELECT count(*) FROM user WHERE user_email=".$_POST["user_email"];
+            if (mysqli_query($_con,$sql)) echo 'exist';else echo 'not exist';
+</code>
+这样写的话就不用转义了,还有mysqli_query里面的参数你写反了,而且你上面都用到的mysqli,为什么下面还要用mysql ??

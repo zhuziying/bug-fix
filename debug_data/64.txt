@@ -1,0 +1,9 @@
+为什么不可能创建一个继承OnTouchListener的类？
+Android SDK在<code>TouchEvent</code>有一个接口（<code>android.view.View.OnTouchListener</code>）。我不知道为什么下面这一行是错误的。Eclipse在<code>OnTouchListener</code>报错。
+<code>public class TouchHandler extends OnTouchListener{
+</code>
+如果我改为<code>public interface TouchHandler extends OnTouchListener{</code> 就没有错误了。
+那就是说我不能创建一个能继承<code>OnTouchListener</code>的类。为什么啊？ 
+----------------------------------------------------------------------------------------------------
+使用<code>public class TouchHandler implements OnTouchListener{</code>
+代替<code>public class TouchHandler extends OnTouchListener{</code>

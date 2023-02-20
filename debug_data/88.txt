@@ -1,0 +1,21 @@
+android日历问题：在日历的月份中+1
+我正在用下边的代码
+<code>Calendar cal = Calendar.getInstance();
+System.out.println("Before "+cal.getTime());
+cal.set(Calendar.MONTH, 01);
+System.out.println("After "+cal.getTime());
+</code>
+输出是：
+<code>Before Thu Jan 31 10:07:34 IST 2013
+After Sun Mar 03 10:07:34 IST 2013
+</code>
+在1月+1的时候给出的是3月，如果我加的是30天可能返回的输出结果就是正确的了。但是我想要显示的是2月，有人能帮帮我么？ 
+----------------------------------------------------------------------------------------------------
+我解决这个问题了
+用这个代码
+<code>Calendar cal = Calendar.getInstance();
+System.out.println("Before "+cal.getTime());  //Before Thu Jan 31 10:16:23 IST 2013
+
+cal.add(Calendar.MONTH, 1);
+System.out.println("After "+cal.getTime()); //After Thu Feb 28 10:16:23 IST 2013
+</code>
