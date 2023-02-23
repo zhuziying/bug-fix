@@ -1,0 +1,51 @@
+python线程问题  threads can only be started once
+
+代码如下：
+import tkinter as tk
+from tkinter import ttk
+from threading import Thread
+import time
+class main():
+     def method(self):
+         for i in range(3):
+             time.sleep(1)
+             print(i)
+op = main()
+runT = Thread(target=op.method)
+win = tk.Tk()
+win.title("Python")
+def click():
+        runT.start()
+action = ttk.Button(win, text="Click Me!", command=click) # 7
+action.grid(column=0, row=0)
+win.mainloop()
+我想每次点击下按钮就执行一次，但是python线程只能执行一次 按钮第二次点击就报错threads can only be started once     请问如何才能解决呢？ 
+----------------------------------------------------------------------------------------------------
+因为你只建立了一个进程,这个进程只能管理当前的一次操作。
+因此可以每次点击的时候都重新建立一个进程,如下所示。
+<code> import tkinter as tk
+from tkinter import ttk
+from threading import Thread
+import time
+
+
+class main:
+    def newThread(self):
+        Thread(target=self.method).start()
+
+    def method(self):
+        for i in range(3):
+            time.sleep(1)
+            print(i)
+
+op = main()
+win = tk.Tk()
+win.title("Python")
+
+def click():
+    op.newThread()
+
+action = ttk.Button(win, text="Click Me!", command=click) # 7
+action.grid(column=0, row=0)
+win.mainloop()
+</code>

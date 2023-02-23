@@ -1,0 +1,16 @@
+python django views函数传值问题？
+django里面的views.py 
+里面的函数的第一个参数都是request，可以添加第二个参数吗？
+如def showpost(request,slug)，，怎么添加slug 
+----------------------------------------------------------------------------------------------------
+urls.py
+<code> urlpatterns = [
+    path('xxx/<int:slug>/', views.showpost),    # 这里相当于给slug赋值(匹配url,http://localhost:8000/xxx/123,相当于slug的值就是123)
+]
+
+</code>
+views.py
+<code> def showpost(request,slug):
+     # 在这里就能取到sulg的值
+
+</code>

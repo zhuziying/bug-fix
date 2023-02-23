@@ -1,0 +1,96 @@
+Python3 socket 编写全双工通信遇到问题
+#服务器
+<code>import socket
+import select
+import sys
+
+HOST = ''                 # Symbolic name meaning all available interfaces
+PORT = 5007              # Arbitrary non-privileged port
+BUFSIZ = 1024
+ADDR = (HOST, PORT)
+
+tcpSer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+tcpSer.bind(ADDR)
+tcpSer.listen(1)
+inputs = [tcpSer, sys.stdin]
+
+while True:
+    print('Waiting for connection')
+    tcpCli, addr = tcpSer.accept()
+    print('...connected from:', addr)
+    inputs.append(tcpCli)
+    readable, writable, exceptional = select.select(inputs, [], [])
+
+    while True:
+        for indata in readable:
+            if indata is tcpCli:
+                data = tcpCli.recv(BUFSIZ)
+                if not data:
+                    break
+            print('message received:', data.decode())
+        else:
+            message = input('>')
+            tcpCli.send(message.encode('utf-8'))
+
+    tcpCli.close()
+tcpSer.close()
+</code>
+#客户端
+<code>import socket
+import select
+import sys
+
+HOST = '172.23.214.95'    # The remote host
+PORT = 5007              # The same port as used by the server
+BUFSIZ = 1024
+ADDR = (HOST, PORT)
+
+tcpSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+tcpSock.connect(ADDR)
+
+while True:
+    readable, writable, exceptional = select.select([tcpSock, sys.stdin], [], [])
+    for indata in readable:
+        if indata is tcpSock:
+            message = tcpSock.recv(BUFSIZ)
+            if not message:
+                break
+            print('Message received:', message.decode('utf-8'))
+        else:
+            message = input('>')
+            if not message:
+                break
+            tcpSock.send(message.encode('utf-8'))
+
+tcpSock.close()
+
+</code>
+运行报错：
+Traceback (most recent call last):
+  File "E:/Python project/Python_Study/Client01.py", line 14, in 
+    readable, writable, exceptional = select.select([tcpSock, sys.stdin], [], [])
+OSError: [WinError 10038] 在一个非套接字上尝试了一个操作。 
+----------------------------------------------------------------------------------------------------
+import socket
+import select
+import sys
+HOST = '172.23.214.95'    # The remote host
+PORT = 5007              # The same port as used by the server
+BUFSIZ = 1024
+ADDR = (HOST, PORT)
+tcpSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+tcpSock.connect(ADDR)
+while True:
+    readable, writable, exceptional = select.select([tcpSock, sys.stdin], [], [])
+    for indata in readable:
+        if indata is tcpSock:
+            message = tcpSock.recv(BUFSIZ)
+            if not message:
+                break
+            print('Message received:', message.decode('utf-8'))
+        else:
+            message = input('>')
+            if not message:
+                break
+            tcpSock.send(message.encode('utf-8'))
+tcpSock.close()

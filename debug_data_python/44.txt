@@ -1,0 +1,40 @@
+python一个关于while循环的报错问题
+girls = ['gujin','yangmi','zhengshuang']
+my_girls = []
+a = len(girls)
+a = int(a)
+while a >= 0:
+    a=a-1
+    girl = girls.pop()
+    my_girls.append(girl)
+    continue
+for my_girl in my_girls:
+    print(my_girl)
+<code>报错：
+Traceback (most recent call last):
+</code>
+File "girls4.py", line 6, in 
+    girl = girls.pop()
+IndexError: pop from empty list
+这段执行不报错：
+girls = ['gujin','yangmi','zhengshuang']
+my_girls = []
+while girls:
+    girl = girls.pop()
+    my_girls.append(girl)
+for my_girl in my_girls:
+    print(my_girl) 
+----------------------------------------------------------------------------------------------------
+girls = ['gujin','yangmi','zhengshuang']
+my_girls = []
+a = len(girls)
+a = int(a)
+while a >= 0:
+    a=a-1
+    if a >= 0:
+        girl = girls.pop()
+        my_girls.append(girl)
+    else:
+        break
+for my_girl in my_girls:
+    print(my_girl)

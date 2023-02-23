@@ -1,0 +1,126 @@
+Python，类中字典变量的疑问
+各位python大神，我刚开始看python，遇到一个问题，有点疑惑，请高手给解下惑
+我在一个类中定义了一个字符串变量和一个字典变量
+我实例化几个实例，分别对字符串变量和字典变量进行赋值，然后存储到一个链表中，最后打印发现字典变量总是会被最后一次赋值覆盖掉。
+字典变量在类中就相当于static了吗？
+SysConfig 数据库中的信息读取后，保存到这个SysConfig中
+<code> # coding=utf-8
+
+import json
+
+class SysConfig(object):
+    syscfg = {
+        "id":0,
+        "name":"",
+        "switcherid":0,
+        "centreconsoleid":0,
+        "port":"",
+        "teacher":"",
+        "teacher_panorama":"",
+        "student":"",
+        "student_panorama":"",
+        "blackboard":"",
+        "course":""
+    }
+
+    test="test";
+
+    def __init__(self):
+        pass;
+
+    def getSysCfg(self):
+        return self.syscfg;
+
+    def setSyscfg(self, cfg):
+        for key in cfg:
+            self.syscfg[key] = cfg[key];
+
+        self.test = str(cfg);
+</code>
+数据库操作类：
+<code> import pymysql
+import sys
+import sysCfg
+
+class GSDBHelper(object):
+
+    dbConfig = {
+          'host':'127.0.0.1',
+          'port':3306,
+          'user':'root',
+          'password':'root',
+          'db':'db_test',
+          'charset':'utf8mb4',
+          'cursorclass':pymysql.cursors.DictCursor
+          }
+
+    dbsysList = [];
+
+    def __init__(self):
+        pass;
+
+    def setConfig(self, host, port, user, password, db):
+        self.dbConfig["host"] = host;
+        self.dbConfig["port"] = port;
+        self.dbConfig["user"] = user;
+        self.dbConfig["password"] = password;
+        self.dbConfig["db"] = db;
+
+        # print("db config...", self.dbConfig);
+
+    def getSysConfig(self):
+        try:
+            self.dbsysList.clear();
+
+            conn = pymysql.connect(**self.dbConfig);
+            cur = conn.cursor();
+            cur.execute("select * from dbt_sys");
+            rows = cur.fetchall();
+            for row in rows:
+                dbsys = sysCfg.SysConfig();
+                dbsys.setSyscfg(row);
+                self.dbsysList.append(dbsys);
+
+            for sysItem in self.dbsysList:
+                print(sysItem, " syscfg... ", sysItem.getSysCfg());
+                print(sysItem, " test 字符串  ", sysItem.test);
+
+        except:
+            info = sys.exc_info();
+            print(info[0], ":", info[1]);
+        finally:
+            if "conn" in locals().keys():
+                conn.close();
+</code>
+执行：
+<code> import dbhelper
+
+if __name__ == '__main__':
+    db = dbhelper.GSDBHelper();
+    db.setConfig("127.0.0.1", 3306, "root", "ab123@", "db_gsaid");
+    db.getSysConfig();
+</code>
+运行结果：
+<code> <sysCfg.SysConfig object at 0x0293A2D0>  syscfg...  {'id': 2, 'name': None, 'switcherid': 1, 'port': '{"sprite":99991, "cameractrl1":2001, "cameractrl2":2002, "cameractrl3":2003, "cameractrl4":2004}', 'centreconsoleid': None, 'teacher': None, 'teacher_panorama': None, 'student': None, 'student_panorama': None, 'blackboard': None, 'course': None, 'info': None}
+<sysCfg.SysConfig object at 0x0293A2D0>  test 字符串   {'id': 1, 'name': '', 'switcherid': 1, 'centreconsoleid': 1, 'port': '{"sprite":9999, "cameractrl1":2001, "cameractrl2":20021, "cameractrl3":2003, "cameractrl4":2004}', 'teacher': '{"time":{"min":2000, "max":600000}, "lostormax_cutto":"student_panorama", "effect1":{"id":16, "pect":100}, "effect2":{"id":16, "pect":0}}', 'teacher_panorama': '{"time":{"min":2000, "max":100000}, "effect1":{"id":16, "pect":100}, "effect2":{"id":16, "pect":0} }', 'student': '{"time":{"min":2000, "max":100000} , "effect1":{"id":16, "pect":100}, "effect2":{"id":16, "pect":0}}', 'student_panorama': '{"time":{"min":2000, "max":100000} , "effect1":{"id":16, "pect":100}, "effect2":{"id":16, "pect":0}}', 'blackboard': '{"time":{"min":2000, "max":100000}, "effect1":{"id":16, "pect":100}, "effect2":{"id":16, "pect":0} }', 'course': '{"time":{"min":2000, "max":100000} , "effect1":{"id":16, "pect":100}, "effect2":{"id":16, "pect":0}}', 'info': None}
+<sysCfg.SysConfig object at 0x0293A2F0>  syscfg...  {'id': 2, 'name': None, 'switcherid': 1, 'port': '{"sprite":99991, "cameractrl1":2001, "cameractrl2":2002, "cameractrl3":2003, "cameractrl4":2004}', 'centreconsoleid': None, 'teacher': None, 'teacher_panorama': None, 'student': None, 'student_panorama': None, 'blackboard': None, 'course': None, 'info': None}
+<sysCfg.SysConfig object at 0x0293A2F0>  test 字符串   {'id': 2, 'name': None, 'switcherid': 1, 'centreconsoleid': None, 'port': '{"sprite":99991, "cameractrl1":2001, "cameractrl2":2002, "cameractrl3":2003, "cameractrl4":2004}', 'teacher': None, 'teacher_panorama': None, 'student': None, 'student_panorama': None, 'blackboard': None, 'course': None, 'info': None}
+</code> 
+----------------------------------------------------------------------------------------------------
+原来这样。。。
+要理解一下python跟别的面向对象语言的不同,应该这样:
+<code> class people:
+
+    def __init__(self, s, n):
+       self. m = {}
+       self.m[s] = n
+    def show(self):
+       self. m = {}
+       print(self.m)
+
+p1 = people('年龄', 1)
+p2 = people('年龄', 2)
+
+p1.show()
+p2.show()
+</code>

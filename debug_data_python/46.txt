@@ -1,0 +1,34 @@
+请教wxPython4.0中还有没有SplashScreen这个属性？调用一直出错
+环境：Anaconda3  Python3.6  wxPython4.0 
+问题：在尝试为程序添加启动图片时，网上找到了一段代码如下：
+<code>import wx
+class PaintApp(wx.App):
+    def OnInit(self):
+            bmp = wx.Image("wxPython.JPG")
+            wx.SplashScreen(bmp,wx.SPLASH_CENTER_ON_SCREEN | wx.SPLASH_TIMEOUT,1000,None,-1)
+            wx.Yield()
+            frame = PaintFrame(None)
+            frame.Show(True)
+            self.SetTopWindow(frame)
+            return True
+if __name__ == '__main__':
+            app = PaintApp()
+            app.MainLoop()
+</code>
+没有其他错误，只提示“AttributeError: module 'wx' has no attribute 'SplashScreen'”。
+运行普通窗体程序都没有问题，只有在用到wx.SplashScreen()时才报错，网上找了很久也几乎没有相似的错误，会不会是版本问题？ 
+----------------------------------------------------------------------------------------------------
+import wx
+from wx import adv
+class PaintApp(wx.App):
+    def OnInit(self):
+            bmp = wx.Image("wxPython.jpg").ConvertToBitmap()
+            adv.SplashScreen(bmp,adv.SPLASH_CENTER_ON_SCREEN | adv.SPLASH_TIMEOUT,1000,None,-1)
+            wx.Yield()
+            frame = PaintFrame(None)
+            frame.Show(True)
+            self.SetTopWindow(frame)
+            return True
+if name == '__main__':
+            app = PaintApp()
+            app.MainLoop()

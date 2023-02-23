@@ -1,0 +1,12 @@
+python的一个小问题。。
+def multi(*p):
+    result=1
+    for i in p:
+        result=result*(p)
+    return result
+n=int(input("输入一个数字"))
+multi(n) 
+----------------------------------------------------------------------------------------------------
+def multi(*p)  *
+for i in p:
+你是想多个参数赋值给i的话,result=result*(p) 应该改成result=result i

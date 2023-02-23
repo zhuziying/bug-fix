@@ -1,0 +1,58 @@
+请问问题出现在哪了？
+题目：Implement the Queue ADT, using a list such that the rear of the queue is at the end of the list
+代码：
+class Queue:
+       def init(self):
+           self.items = []
+<code>   def isEmpty(self):
+       return self.items == []
+
+   def enqueue(self, item):
+       self.items.insert(0,item)
+
+   def dequeue(self):
+       return self.items.pop()
+
+   def size(self):
+       return len(self.items)
+
+q=Queue()
+q=Queue()
+
+q.enqueue(4)
+q.enqueue('dog')
+q.enqueue(True)
+print(q.size())
+    请问为什么错了
+</code> 
+----------------------------------------------------------------------------------------------------
+<code> class Queue:
+    def __init__(self):
+       self.items = []
+
+    def isEmpty(self):
+       return self.items == []
+
+    def enqueue(self, item):
+       self.items.insert(0,item)
+
+    def dequeue(self):
+       return self.items.pop()
+
+    def size(self):
+       return len(self.items)
+
+q=Queue()
+
+q.enqueue(4)
+q.enqueue('dog')
+q.enqueue(True)
+print(q.size())
+print q.dequeue()
+print(q.size())
+</code>
+输出:
+<code>3
+4
+2
+</code>

@@ -1,0 +1,48 @@
+输入用户名密码后，总是提示用户不存在
+定义账号列表信息
+userlist = [
+    {"name": "zhangsan", "password": 562390, "money": 500},
+    {"name": "lisi", "password": 123456, "money": 1000},
+    {"name": "wangwu", "password": 897456, "money": 2000}
+]
+#确认用户登录
+def UserLogin(username, pwd):
+<code>for i in range(len(userlist)):
+    if userlist[i]['name'] == username and userlist[i]['password'] == pwd:
+        print("登录成功！")
+    else:
+        print("用户不存在！")
+</code>
+初始页面
+while True:
+    print("欢迎进入中国银行")
+    print("1. 登陆", "2. 退出", "3.存钱", "4.取钱", "5.查询")
+    key = input("请输入选择:")
+    # 根据key进行判断
+    if key == "1":
+        username = input("请输入账户:")
+        pwd = input("请输入密码:")
+        UserLogin(username, pwd)
+        input("按回车键继续:")
+<code>    #问题：定义账号列表信息，输入用户名密码后，总是提示用户不存在。
+</code> 
+----------------------------------------------------------------------------------------------------
+def UserLogin(username, pwd):
+    for i in range(len(userlist)):
+        if userlist[i]['name'] == username and userlist[i]['password'] == pwd:
+            return 1
+while True:
+    print("欢迎进入中国银行")
+    print("1. 登陆", "2. 退出", "3.存钱", "4.取钱", "5.查询")
+    key = input("请输入选择:")
+    # 根据key进行判断
+    if key == "1":
+        username = input("请输入账户:")
+        pwd = input("请输入密码:")
+        if  UserLogin(username, int(pwd))==1:
+            print('登陆成功')
+        else:
+            print('登陆失败')
+        input("按回车键继续:")
+<code>        特地调试了一下,望采纳!
+</code>

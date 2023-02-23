@@ -1,0 +1,15 @@
+python运行结果为什么是十六进制的数值
+def my_range(start, last, step):
+    number = start
+    while number < last:
+        yield number
+        number += step
+    return number
+a= my_range(0, 7, 1)
+print(a)
+报错： 
+----------------------------------------------------------------------------------------------------
+都已经yield了还return干啥?删掉return number那行。
+print(a)是打印这个生成器。改成:
+for item in my_range(0, 7, 1):
+    print(item)

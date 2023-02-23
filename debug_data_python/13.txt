@@ -1,0 +1,77 @@
+python截屏问题 win32和PIL
+服务器部署截屏程序，本地远程登录服务器的时候能正常截屏，如果把远程界面关闭或者最小化的时候，截屏就会失败
+使用PIL的情况：
+<code> coordinate = (0, 0, 60,20)
+ pic = ImageGrab.grab(coordinate)
+</code>
+错误信息：
+<code> File "E:\python-workspace\crawler-20150529\spiders\gz_spider.py", line 141, in _do_crawl_img_by_screenshot
+    pic = ImageGrab.grab(coordinate)  # 截图
+  File "D:\Python27\lib\site-packages\PIL\ImageGrab.py", line 34, in grab
+    size, data = grabber()
+IOError: screen grab failed
+</code>
+使用win32截屏也是用户界面打开的时候能成功，把远程界面退出或者最小化的时候截屏失败，代码如下：
+<code>GrabUtil.py
+ def grab(dpath,args):
+  ''''' 
+参数为指定保存的目录 
+返回图片文件名,文件名格式:日期.jpg 如:2009328224853.jpg 
+  '''
+  hwnd = 0
+  hwndDC = win32gui.GetWindowDC(hwnd)  
+  mfcDC=win32ui.CreateDCFromHandle(hwndDC)  
+  saveDC=mfcDC.CreateCompatibleDC()  
+  saveBitMap = win32ui.CreateBitmap()  
+  MoniterDev=win32api.EnumDisplayMonitors(None,None) 
+  #w = MoniterDev[0][2][2]
+  #h = MoniterDev[0][2][3]
+  w = args[2]
+  h = args[3]
+  #print w,h　　　#图片大小 
+  saveBitMap.CreateCompatibleBitmap(mfcDC, w,h)
+  saveDC.SelectObject(saveBitMap)  
+  saveDC.BitBlt((0,0),(w, h) , mfcDC, (args[0],args[1]), win32con.SRCCOPY)
+  cc=time.gmtime() 
+  bmpname=str(cc[0])+str(cc[1])+str(cc[2])+str(cc[3]+8)+str(cc[4])+str(cc[5])+'.bmp'
+  saveBitMap.SaveBitmapFile(saveDC, bmpname)
+  pic = Image.open(bmpname)
+  pic.save(os.path.join(dpath, 'xxxxx.jpeg'), 'jpeg')
+  os.remove(bmpname)
+  return pic
+</code>
+报错信息：
+<code> File "E:\python-workspace\crawler-20150529\spiders\sele.py", line 162, in _do_crawl_img
+    img = self._do_crawl_img_by_screenshot()
+  File "E:\python-workspace\crawler-20150529\spiders\sz_spider.py", line 149, in _do_crawl_img_by_screenshot
+    pic = grab(self.storage_path,coordinate)
+  File "E:\python-workspace\crawler-20150529\GrabUtil.py", line 24, in grab
+    saveDC.BitBlt((0,0),(w, h) , mfcDC, (args[0],args[1]), win32con.SRCCOPY)
+error: BitBlt failed
+</code>
+初步判定原因：win7 服务器用户登录的时候截屏没有问题，本地远程登陆这台服务器的时候也没有问题，远程界面最小化的时候界面可能调用的是本地服务器的本地方法截屏，所以失败，当我关闭远程界面的时候，这个时候服务器是没有用户登录的状态，所以截屏也失败了，希望那位大牛能帮忙解决问题，告知具体原因 
+----------------------------------------------------------------------------------------------------
+def grab_screen_1(left,top,right,bottom):
+<code>im = ImageGrab.grabclipboard()
+while True:
+    win32api.keybd_event(win32con.VK_SNAPSHOT, 0, 0, 0)
+    time.sleep(1)
+    win32api.keybd_event(win32con.VK_SNAPSHOT, 0, win32con.KEYEVENTF_KEYUP, 0)
+    time.sleep(5)
+    filename = 'a.png'
+    im = ImageGrab.grabclipboard()
+    if im is None:
+        print('===>is None ')
+    else:
+        print('===>' + str(im.size))
+        break
+
+print('===>get ' + str(im.size))
+rect = (left, top, right, bottom)
+im = im.crop(rect)
+#im.show()
+#im.save(filename, 'PNG')
+return im
+
+    我也遇到这个问题,使用上面代码可以
+</code>

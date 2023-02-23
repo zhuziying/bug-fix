@@ -1,0 +1,28 @@
+关于python打印0~500内的所有质数，求解答
+今天遇到一个问题是关于python打印0~500内的所有质数的题，然后我用如下代码打印，发现在测试时打印0~10内的质数都满足不了，但是我感觉逻辑上好像没啥错误呀。求帮助~
+<code>def printzs(n):
+    if n==1 or n==0:
+        return False
+    for i in range(2,n-1):
+        if n%i==0:
+            return False
+        else:
+            return n
+zs=filter(printzs,[x for x in range(0,10)])
+print zs
+</code>
+ 
+----------------------------------------------------------------------------------------------------
+else的缩进错了
+<code>def printzs(n):
+    if n==1 or n==0:
+        return False
+    for i in range(2,n-1):
+        if n%i==0:
+            return False
+    else:
+        return True
+zs=filter(printzs,[x for x in range(0,10)])
+print zs
+</code>
+[2, 3, 5, 7]

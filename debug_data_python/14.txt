@@ -1,0 +1,32 @@
+python解释器里显示语法错误
+class Person:
+    def sayHi(self):
+        print 'Hello,how are you?'
+p = Person()
+p.sayHi()
+
+
+
+class hh:
+...     def say(self):
+...         print 'hi'
+... x = hh()
+  File "", line 4
+    x = hh()
+    ^
+SyntaxError: invalid syntax
+同样的代码怎么在python解释器里就显示语法错误了？
+
+
+ 
+----------------------------------------------------------------------------------------------------
+x=hh()写在类的定义里,当然会出错   ...表示代码在同一个区域里
+class hh:
+... def say(self):
+... print 'hi'
+
+
+
+x = hh()
+
+

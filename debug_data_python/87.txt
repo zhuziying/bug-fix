@@ -1,0 +1,34 @@
+大家好，我是python的初学者，遇到了点问题解决不了了，向大家求助。
+我想写一个可自动出数学题的程序，目前只写了加法部分，但是遇到了点问题，
+import random
+def add():
+    a = random.randint(0,10)
+    b = random.randint(0,10)
+    print(f"{a} + {b} = ?")
+    c = input("> " )
+    if a + b == c:
+        i = 1
+        while i <= 10:
+            i += 1
+            add()
+    else:
+        print("sorry, you wrong!")
+add()
+运行之后，无论输入什么都会跳转到else。 
+----------------------------------------------------------------------------------------------------
+<code>import random
+def add():
+    a = random.randint(0,10)
+    b = random.randint(0,10)
+    print(f"{a} + {b} = ?")
+    c = input("> " )
+    if a + b != int(c):
+        print("sorry, you're wrong!")
+    else:
+        print("congrats!")
+
+i = 1
+while i <= 10:
+    i += 1
+    add()
+</code>

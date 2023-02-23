@@ -1,0 +1,35 @@
+xlwings读写多个excel为什么时快时慢?
+运行以下代码，正常是5秒就读写好了一个excel，但是有时候读写一个excel文件要20分钟，为什么会出现时快时慢的问题呢？
+<code>import xlwings as xw
+
+def func(file):
+    app = xw.App(visible=False, add_book=False)
+    wbk = app.books.open(file)
+
+        #读写excel
+
+        wbk.save()
+        app.kill()
+
+files = ['a.xlsx','b.xlsx'] #这里有若干文件，我的大概20个
+for file in files:
+    func(file)
+</code> 
+----------------------------------------------------------------------------------------------------
+app = xw.App(visible=False, add_book=False)这句运行慢,把这句单独提出来。
+<code>import xlwings as xw
+
+
+def func(app, file):
+    wbk = app.books.open(file)
+    # 读写excel
+    wbk.save()
+
+
+files = ['a.xlsx', 'b.xlsx']  # 这里有若干文件,我的大概20个
+app = xw.App(visible=False, add_book=False)
+for file in files:
+    func(app, file)
+app.kill()
+
+</code>

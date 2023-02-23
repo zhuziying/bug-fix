@@ -1,0 +1,22 @@
+python 利用特殊方法判定两个字符是否相等出问题，请大神指点
+class Word():
+    def init(self, text):
+        self.text == text
+    def eq(self, other):
+        return self.text.lower() == other.text.lower()
+first = Word('HE')
+second = Word('he')
+third = Word('Hi')
+print(first == second)
+print(second == third)
+print(first == third)
+报错：AttributeError: 'Word' object has no attribute 'text' 
+----------------------------------------------------------------------------------------------------
+<code>
+</code>
+class Word():
+def init(self, text):
+self.text = text
+<code>
+</code>
+init函数中text没赋值对

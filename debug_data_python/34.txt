@@ -1,0 +1,80 @@
+python问题 求大神解答
+我是个小白/ 这里有个问题不太懂  求解
+代码送上
+<code> #encoding:utf-8
+#!/user/bin/python
+
+import urllib.request
+import city
+import time
+import json
+import tkinter as tk
+import win32api
+
+class Application(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.pack()
+        self.create_widgets()
+
+
+    def create_widgets(self):
+        self.lable1=tk.Label()
+        self.lable1.pack(side="top")
+        self.lable1["text"]="请输入一个城市 \n 例如：东莞/北京/上海……"
+
+        self.CityInputTEXT=tk.Text()
+        self.CityInputTEXT.pack(side='bottom')
+
+
+        self.button1=tk.Button()
+        self.button1.pack(side="bottom")
+        self.button1['text']="查询"
+        if self.button1['command'] :
+            return self.CityInputTEXT["text"]
+
+
+
+
+    def chaxun(CTname):
+        cityname=city.city.get(CTname)
+
+        if cityname:
+            url = "http://www.weather.com.cn/data/cityinfo/%s.html" % cityname
+            content = urllib.request.urlopen(url).read().decode("utf-8")
+            data = json.loads(content)
+            result = data['weatherinfo']
+            Weather = json.loads(content)
+            cityZIDIAN = Weather["weatherinfo"]
+            cityInformation = ("%s\n%s\n%s ~ %s") % (cityZIDIAN['city'], cityZIDIAN['weather'],result['temp1'],result['temp2'])
+            return cityInformation
+        else:
+            win32api.MessageBox(0, "There are no this City\n\a没有該城市！", "今天天气")
+
+
+
+
+root = tk.Tk()
+
+app=Application(root)
+
+
+
+
+
+
+app.mainloop()
+
+</code>
+
+运行后是这样的
+我想要 使用查询功能
+在app.mainloop()上面加了一句
+<code> win32api.MessageBox(0,app.chaxun(app.create_widgets()),"")
+</code>
+结果就运行错误  如图
+希望大神能快点解答
+小弟在此谢过 
+----------------------------------------------------------------------------------------------------
+<code> def chaxun(CTname):   //函数参数数目为1,调用时,传了2个参数,不匹配。
+</code>
