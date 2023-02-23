@@ -1,0 +1,48 @@
+问题描述：
+最简单cython编译出现问题，大神求帮忙
+在使用cython编译最简单的helloworld程序时出现如下问题：
+本人使用的是anaconda3+vs2015
+<code>Compiling helloworld.pyx because it changed.
+[1/1] Cythonizing helloworld.pyx
+running build_ext
+Traceback (most recent call last):
+  File "setup.py", line 5, in <module>
+    ext_modules = cythonize("helloworld.pyx")
+  File "D:\anaconda\lib\distutils\core.py", line 148, in setup
+    dist.run_commands()
+  File "D:\anaconda\lib\distutils\dist.py", line 955, in run_commands
+    self.run_command(cmd)
+  File "D:\anaconda\lib\distutils\dist.py", line 974, in run_command
+    cmd_obj.run()
+  File "D:\anaconda\lib\distutils\command\build_ext.py", line 308, in run
+    force=self.force)
+  File "D:\anaconda\lib\distutils\ccompiler.py", line 1031, in new_compiler
+    return klass(None, dry_run, force)
+  File "D:\anaconda\lib\distutils\cygwinccompiler.py", line 285, in __init__
+    CygwinCCompiler.__init__ (self, verbose, dry_run, force)
+  File "D:\anaconda\lib\distutils\cygwinccompiler.py", line 129, in __init__
+    if self.ld_version >= "2.10.90":
+TypeError: '>=' not supported between instances of 'NoneType' and 'str'
+
+</code>
+helloworld.pyx文件中的代码
+<code> print('hello world')
+</code>
+setup.py中代码
+<code> from distutils.core import setup
+from Cython.Build import cythonize
+
+setup(
+    ext_modules = cythonize("helloworld.pyx")
+)
+</code> 
+----------------------------------------------------------------------------------------------------
+修改方案：
+这个是什么问题造成的呢,大神帮忙解答一下
+<code> C:\MinGW\bin\gcc.exe -shared -s build\temp.win-amd64-3.6\Release\helloworld.o build\temp.win-amd64-3.6\Release\helloworld.cp36-win_amd64.def -LD:\anaconda\libs -LD:\anaconda\PCbuild\amd64 -lpython36 -lmsvcr140 -o "C:\Users\yangtianwei\Desktop\新建文件夹 (2)\helloworld.cp36-win_amd64.pyd"
+c:/mingw/bin/../lib/gcc/mingw32/6.3.0/../../../../mingw32/bin/ld.exe: cannot find -lmsvcr140
+collect2.exe: 错误:ld 返回 1
+error: command 'C:\\MinGW\\bin\\gcc.exe' failed with exit status 1
+</code>
+----------------------------------------------------------------------------------------------------
+人工打分：

@@ -1,0 +1,35 @@
+问题描述：
+pathon问题，在线求解
+#!/usr/bin/python
+class Vector:
+  def init(self,a,b):
+    self.a = a
+    self.b = b
+  def init(self):
+    return 'Vector (%d,%d)' % (self.a,self.b)
+def add(self,other):
+    return Vector(self.a + other.a, self.b+other.b)
+v1 = Vector(1,2)
+v2 = Vector(3,4)
+print(v1+v2)
+运行结果：
+root@kali:~/Desktop# python t2.py
+Traceback (most recent call last):
+  File "t2.py", line 13, in 
+    v1 = Vector(1,2)
+TypeError: init() takes 1 positional argument but 3 were given
+大家帮看看问题在哪儿 
+----------------------------------------------------------------------------------------------------
+修改方案：
+首先你定义了两次 init(), 就像变量被赋值了两次一样,两次定义中,第一次的失效了.init()用的是第二次定义的内容.
+然后init(self)的形参self是表示类本身,会自动传入,无需给出.所以调用init()无需给出参数.
+后面的调用可以解释为: 
+v1 = Vector(1,2)
+TypeError: init() takes 1 positional argument but 3 were given
+需要一个参数(self自动传入了),给了3个参数(self,1,2)
+最后要明确的是 构造函数的写法是
+<code>def __init__(self):
+    <code>
+</code>
+----------------------------------------------------------------------------------------------------
+人工打分：

@@ -1,0 +1,64 @@
+问题描述：
+求助python操作mysql问题，运行过一段时间，就不显示好象没有执行一样。程序代码如下。
+python同步微信群信息并且将所要信息采集到mysql数据库。程序运行一段时间，有可能是一个早上，也有可能是几分钟。即不报错，也没打印信息。。非常奇怪
+<code>我原来以为是mysql的8小时链接限制，所以我把数据库做到本地和远程数据库分别做了测试，是一样的，过段时间就会不显示，象哑了一样。
+
+关键代码如下，打印过save_info_mysql中所有参数，不过程序是不是正常还是没有显示的时候，参数都是正确传入无误的，所以错的关键是以下save_info_mysql函数。还求大神指点
+</code>
+保存数据到数据库
+def save_info_mysql(d, village, price, area, telphone, telphone2):
+   stime = datetime.datetime.fromtimestamp(d['CreateTime'])
+   mycursor = mdb.cursor()
+   Content = sub_telphone(d)
+   sql1 = "select * from log where content = '%s'" % (Content)
+   print(sql1)      #这句打印可以执行，并且显示
+   result = mycursor.execute(sql1)
+   print(result)      #这句程序开始运行的时候会显示0或1，运行过一段时间就不打印了，好象是没有执行这句，包括后面的IF  else都是没有执行的。就象程序运行在这里就中断了，然后重新开始循环一样。
+   if result:
+      print(Content + "数据已经存在")
+      return
+   else:
+      sql = '''INSERT INTO log (wxname,content,stime,village,price,area,telphone6,telphone11,istj) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s')''' % (
+            d['ActualNickName'], Content, str(stime), village, price, area, telphone, telphone2, 0)
+      mycursor.execute(sql)
+      mdb.commit()
+      group = itchat.get_chatrooms(update=True)
+      for g in range(0,len(group)):
+          if group[g]['NickName'] in groups:
+              print(group[g]['NickName'])
+              itchat.send(Content, group[g]['UserName'])
+              print(Content + '写入数据')
+              time.sleep(1) 
+----------------------------------------------------------------------------------------------------
+修改方案：
+保存数据到数据库
+def save_info_mysql(d, village, price, area, telphone, telphone2):
+   lock.acquire()   #加锁
+   stime = datetime.datetime.fromtimestamp(d['CreateTime'])
+   mycursor = mdb.cursor()
+   Content = sub_telphone(d)
+   sql1 = "select * from log where content = '%s'" % (Content)
+   print(sql1)
+   result = mycursor.execute(sql1)
+   lock.release()    #释放锁
+   time.sleep(1)
+   print(result)
+   if result:
+      print(Content + "数据已经存在")
+      return
+   else:
+      lock.acquire()     #加锁
+      sql = '''INSERT INTO log (wxname,content,stime,village,price,area,telphone6,telphone11,istj) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s')''' % (
+            d['ActualNickName'], Content, str(stime), village, price, area, telphone, telphone2, 0)
+      mycursor.execute(sql)
+      mdb.commit()
+      lock.release()#释放锁
+      group = itchat.get_chatrooms(update=True)
+      for g in range(len(group)):
+          if group[g]['NickName'] in groups:
+              itchat.send(Content, group[g]['UserName'])
+      time.sleep(1)
+      print(Content + '写入数据')
+   mdb.close()
+----------------------------------------------------------------------------------------------------
+人工打分：

@@ -1,0 +1,71 @@
+问题描述：
+Python3：collatz序列编程疑问
+编写一个名为collatz()的函数，它有一个名为number的参数：
+如果参数是偶数，那么collatz()就打印出number//2,并返回该值；
+如果number是奇数，那么collatz()就打印，并返回3*number+1。
+然后编写一个程序，让用户输入一个整数，并不断对这个数调用，collatz()，直到函数返回值1。
+这个程序的输出看起来应该像这样：
+<code>     Enter number: 3  
+    3  
+    10  
+    5  
+    16  
+    8  
+    4  
+    2  
+    1  
+</code>
+我编写的程序如下：
+<code>def collatz(number):
+    if number % 2==0:
+        print(number//2)
+        return number//2
+    if number % 2==1:
+        print(3*number+1)
+        return 3*number+1
+
+number=int(input('Enter an int number:'))
+while True:
+    if collatz(number)!=1:
+        number=collatz(number)
+    else:
+        break 
+</code>
+但是我的程序输出却是以下这样：
+<code> Enter an int number:3
+10
+10
+5
+5
+16
+16
+8
+8
+4
+4
+2
+2
+1
+</code>
+这事怎么回事呢？求指教 
+----------------------------------------------------------------------------------------------------
+修改方案：
+你调用了2次
+<code> def collatz(number):
+    if number % 2==0:
+        print(number//2)
+        return number//2
+    if number % 2==1:
+        print(3*number+1)
+        return 3*number+1
+
+number=int(input('Enter an int number:'))
+while True:
+    x = collatz(number)
+    if x!=1:
+        number=x
+    else:
+        break 
+</code>
+----------------------------------------------------------------------------------------------------
+人工打分：

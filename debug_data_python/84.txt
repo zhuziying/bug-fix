@@ -1,0 +1,31 @@
+问题描述：
+Python 提取txt文件中每个单词的首字母
+txt中的内容是一篇英语文章，要读取并判断文章中每一个单词的首字母是否为元音字母并转换形式。c = b + Initial + "py"这一句会报错 TypeError: must be str, not list
+Python 小白求指点。
+file = open(r'C:\football.txt','r')
+lines = file.readlines()
+for word in lines:
+        List = word.split()
+        Initial = List[0:1]
+        if Initial != 'a' or 'e' or 'i' or 'o' or 'u':
+            b = word[1:len(word)]
+            c = b + Initial + "py"
+            print(c.lower()) 
+----------------------------------------------------------------------------------------------------
+修改方案：
+其实你直接说要实现什么效果好些。解释下报错的原因吧:
+1、Initial = List[0:1]你得到的并不是首字母,原因是 word.split()得到的是一个列表,而对列表使用[0:1],你得到的永远是列表的第一个元素(类型还是list),
+所以这里就有问题了,你的if永远都是True(因为list 肯定不会等于 str)
+2、for word in lines: 这里用一个for循环是不够的,除非你的文档是一行一个英文单词,导致你这行b = word[1:len(word)]也有问题
+之所以报错,是+不能用来连接字符串和列表,下面是实现的代码,你可以参考下
+file = open(r'C:\football.txt','r')
+lines = file.readlines()
+for word in lines:
+   for i in word.split():
+       Initial = i[0]
+       if Initial == 'a' or 'e' or 'i' or 'o' or 'u':
+           b = i[1:len(i)]
+           c = b + Initial + "py"
+           print(c.lower())
+----------------------------------------------------------------------------------------------------
+人工打分：

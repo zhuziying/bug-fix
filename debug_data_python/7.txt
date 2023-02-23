@@ -1,0 +1,42 @@
+问题描述：
+python装饰器的疑问,问题长度不够
+<code>def wrapper(func):
+    print 'before'
+    func()
+    print 'after'
+    return func
+
+
+@wrapper
+def yuan():
+    print 'yuan called'
+
+yuan()
+yuan()
+
+</code>
+这段代码执行的结果是这样的:
+before
+yuan called
+after
+yuan called
+yuan called
+为什么第二个yuan()执行的时候,装饰器没有起作用?我用的Python2.7 
+----------------------------------------------------------------------------------------------------
+修改方案：
+你的实现有点问题
+<code>def wrapper(func):
+    def _wrapper():
+        print 'before'
+        func()
+        print 'after'
+    return _wrapper
+
+
+@wrapper
+def yuan():
+    print 'yuan called'
+
+</code>
+----------------------------------------------------------------------------------------------------
+人工打分：

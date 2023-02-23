@@ -1,0 +1,75 @@
+问题描述：
+python UnicodeDecodeError: 'ascii' codec can't...
+错误代码如下：
+Traceback (most recent call last):
+  File "D:\workspace\GP\ppp.py", line 45, in 
+    send_message(url,test_token, msg_data)
+  File "D:\workspace\GP\ppp.py", line 27, in send_message
+    respone=urllib2.urlopen(temp1).read().decode()
+  File "C:\Python27\lib\urllib2.py", line 154, in urlopen
+    return opener.open(url, data, timeout)
+  File "C:\Python27\lib\urllib2.py", line 429, in open
+    response = self._open(req, data)
+  File "C:\Python27\lib\urllib2.py", line 447, in _open
+    '_open', req)
+  File "C:\Python27\lib\urllib2.py", line 407, in _call_chain
+    result = func(*args)
+  File "C:\Python27\lib\urllib2.py", line 1241, in https_open
+    context=self._context)
+  File "C:\Python27\lib\urllib2.py", line 1195, in do_open
+    h.request(req.get_method(), req.get_selector(), req.data, headers)
+  File "C:\Python27\lib\httplib.py", line 1042, in request
+    self._send_request(method, url, body, headers)
+  File "C:\Python27\lib\httplib.py", line 1082, in _send_request
+    self.endheaders(body)
+  File "C:\Python27\lib\httplib.py", line 1038, in endheaders
+    self._send_output(message_body)
+  File "C:\Python27\lib\httplib.py", line 880, in _send_output
+    msg += message_body
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xe4 in position 114: ordinal not in range(128)
+原来代码：
+import json
+import urllib2
+def messages(msg):
+    values = {
+        "touser": 'qy01c75a831f17d000b3d5498cfc',
+        "msgtype": 'text',
+        "agentid": 1000026, 
+        "text": {'content': msg},
+        "safe": 0
+        }
+    msges= json.dumps(values, ensure_ascii=False, encoding="utf-8")
+    return msges
+def get_token(url, corpid, corpsecret):
+    token_url = '%s/cgi-bin/gettoken?corpid=%s&corpsecret=%s' % (url, corpid, corpsecret)
+    token = json.loads(urllib2.urlopen(token_url).read().decode())['access_token']
+    print token
+    return token
+def send_message(url,token, data):
+        send_url = '%s/cgi-bin/message/send?access_token=%s' % (url,token)
+        print send_url
+        temp1=urllib2.Request(url=send_url, data=data)
+        print temp1
+        respone=urllib2.urlopen(temp1).read().decode()
+        x = json.loads(respone)['errcode']
+        # print(x)
+        if x == 0:
+            print ('Succesfully')
+        else:
+            print ('Failed')
+msg='中文'    #此处有中文是出错，英文时没错，为什么呢？？？
+print type(msg)
+print msg
+corpid = '**********************'
+corpsecret = '******************************************'
+url = 'https://qyapi.weixin.qq.com'
+msg_data= messages(msg)
+print msg_data
+test_token=get_token(url, corpid, corpsecret)
+send_message(url,test_token, msg_data) 
+----------------------------------------------------------------------------------------------------
+修改方案：
+在开头声明一下编码
+#coding=utf-8
+----------------------------------------------------------------------------------------------------
+人工打分：

@@ -1,0 +1,81 @@
+问题描述：
+Python在Visual Studio2013编译出错
+环境描述：
+Python 3.4
+Visual Studio 2013
+PTVS 2.1
+想开发一个桌机小程序，作为自己使用python的第一个学习例子，
+工程文件：
+    myWpfApplication1.py
+    myWpfApplication1.xaml
+已将python3.4添加到了Python enviorments中去，
+但是在启动调试时，出现了以下错误提示：
+我是刚入门学习，则进入社区还没有C币悬赏，请见谅，
+请各位大牛不吝指教~~
+附代码
+    myWpfApplication1.xaml
+<code> <Window 
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+       Title="myWpfApplication1" Height="300" Width="300"> 
+       <Grid>
+        <Button x:Name="OkButton" Content="OK" HorizontalAlignment="Left" Height="30" Margin="26,204,0,0" VerticalAlignment="Top" Width="99" Click="OkButton_Click"/>
+        <Button x:Name="CancelButton" Content="CancelButton" HorizontalAlignment="Left" Height="32" Margin="157,204,0,0" VerticalAlignment="Top" Width="112" Click="Button_Click"/>
+        <Label Content="Input your Words" HorizontalAlignment="Left" Height="27" Margin="65,10,0,0" VerticalAlignment="Top" Width="126"/>
+        <Label Content="You Have Input" HorizontalAlignment="Left" Height="37" Margin="65,98,0,0" VerticalAlignment="Top" Width="75"/>
+        <TextBox HorizontalAlignment="Left" Height="51" Margin="65,42,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="152"/>
+        <TextBox HorizontalAlignment="Left" Height="45" Margin="65,140,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="152"/>
+    </Grid>
+</Window> 
+</code>
+<code>myWpfApplication1.py
+</code>
+<code> import wpf
+
+from System.Windows import Application, Window
+
+class MyWindow(Window):
+    def __init__(self):
+        wpf.LoadComponent(self, 'myWpfApplication1.xaml')
+
+    def OkButton_Click(self, sender, e):
+        textInput=self.InputText
+        textOutput=self.OutputText
+        textOutput.Text=textInput.Text
+
+
+    def CancelButton_Click(self, sender, e):
+        textInput=self.InputText
+        textOutput=self.OutputText
+        textInput.Text=''
+        textOutput.Text=''
+
+
+if __name__ == '__main__':
+    Application().Run(MyWindow())
+
+</code> 
+----------------------------------------------------------------------------------------------------
+修改方案：
+myWpfApplication1.py的代码
+import wpf
+from System.Windows import Application, Window
+class MyWindow(Window):
+    def init(self):
+        wpf.LoadComponent(self, 'myWpfApplication1.xaml')
+<code>def OkButton_Click(self, sender, e):
+    textInput=self.InputText
+    textOutput=self.OutputText
+    textOutput.Text=textInput.Text
+
+
+def CancelButton_Click(self, sender, e):
+    textInput=self.InputText
+    textOutput=self.OutputText
+    textInput.Text=''
+    textOutput.Text=''
+</code>
+if name == '__main__':
+    Application().Run(MyWindow())
+----------------------------------------------------------------------------------------------------
+人工打分：

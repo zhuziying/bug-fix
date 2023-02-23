@@ -1,0 +1,27 @@
+问题描述：
+ 使用python抓取网站动态数据不能获取界面实际展示结果
+目标路径：http://qy1.sfda.gov.cn/datasearch/face3/search.jsp?tableId=20
+当前使用方式：
+#coding=utf-8
+import urllib2
+from bs4 import BeautifulSoup
+addr ='http://qy1.sfda.gov.cn/datasearch/face3/search.jsp?tableId=20'
+up  = urllib2.urlopen(addr)
+html = up.read()
+print(html)
+问题：
+实际上需要网页打开展示的数据，但结果却获取到一堆script。
+请大神指导一下！ 
+----------------------------------------------------------------------------------------------------
+修改方案：
+#coding=utf-8
+import requests
+from bs4 import BeautifulSoup
+addr ='http://qy1.sfda.gov.cn/datasearch/face3/search.jsp?tableId=20'
+response = requests.get(addr)
+html = up.read()
+soup = BeautifulSoup(response.content, 'lxml')
+print(soup)
+(需要安装lxml,requests,直接pip install就行)
+----------------------------------------------------------------------------------------------------
+人工打分：

@@ -1,0 +1,186 @@
+问题描述：
+已有对文档进行操作的程序，如何对同一文件夹下所有文档进行此操作？
+原代码如下，之后是我写入该文档的操作。
+<code> import numpy as np
+import codecs
+import time
+
+if __name__ == '__main__':
+
+    allCount = 0
+    time = 0
+    lastnum = -1
+    lists = []
+    linenum = 0
+
+    #init numpy array
+    with open('B48W21  .txt', 'r') as f:
+        content = f.read()
+
+    for x in content.splitlines():
+        x = x.split(",")
+        lists.append(x)
+
+    a = np.array(lists)
+    [rows, cols] = a.shape
+
+    #open file
+    fzt = open("zerotime.txt", "w")
+    fot = open("onetime.txt", "w")
+
+    fz = open("zero.txt", "w")
+    fo = open("one.txt", "w")
+
+    fzm = open("zeromeans.txt", "w")
+    fom = open("onemeans.txt", "w")
+
+</code>
+我改后代码如下，但无法运行错误为：
+File "", line 15
+    for ifile in file：
+                     ^
+SyntaxError: invalid character in identifier
+代码为
+<code>import numpy as np
+import codecs
+import time
+import os
+readfile='F:\\FCD\\实验2'
+writefile='F:\\FCD\\实验副本2'
+file=os.listdir(readfile)
+if __name__ == '__main__':
+
+    allCount = 0
+    time = 0
+    lastnum = -1
+    lists = []
+    linenum = 0
+    for ifile in file：          
+        #init numpy array
+        with open(readfile+'\\'+ifile, 'r') as f:
+            content = f.read()
+
+        for x in content.splitlines():
+            x = x.split(",")
+            lists.append(x)
+
+        a = np.array(lists)
+
+        [rows, cols] = a.shape
+
+        #open file
+        fzt = open(writefile+'\\'+'zerotime'+ifile, "w")
+        fot = open(writefile+'\\'+'onetime'+ifile, "w")
+
+        fz = open(writefile+'\\'+'zero'+ifile, "w")
+        fo = open(writefile+'\\'+'one'+ifile, "w")
+
+        fzm = open(writefile+'\\'+'zeromean'+ifile, "w")
+        fom = open(writefile+'\\'+'onemean'+ifile, "w")
+
+
+</code>
+<code> 还是说我的思路有问题？对已有文档进行操作的程序，同一文件夹下所有文档进行此操作，不能仅仅修改读写文件，还有其他需要更改的地方？
+</code> 
+----------------------------------------------------------------------------------------------------
+修改方案：
+强烈建议,模块化,不要一堆全写到main,既不利于阅读,也不便于定位和分析错误。参考一下本人写的(未实际运行,可能有简单的拼写错误)
+<code>import numpy as np
+import codecs
+import os
+
+# Deal one file and write output files into output_dir
+# Return True for success, False for fail.
+def deal(file, output_dir):
+
+    allCount = 0
+    time = 0
+    lastnum = -1
+    lists = []
+    linenum = 0
+
+    # Do your work of one file
+
+    if not os.path.isfile(file):
+        print 'Error: ', file, 'is not a file'
+        return False
+
+    # Init numpy array
+    with open(file, 'r') as f:
+        content = f.read()
+
+    for x in content.splitlines():
+        x = x.split(',')
+        lists.append(x)
+
+    a = np.array(lists)
+    [rows, cols] = a.shape
+
+    # Open files and do something
+
+    # Open files
+    fzt = open(os.path.join(output_dir, 'zerotime.txt'), 'w')
+    fot = open(os.path.join(output_dir, 'onetime.txt'), 'w')
+
+    fz = open(os.path.join(output_dir, 'zero.txt'), 'w')
+    fo = open(os.path.join(output_dir, 'one.txt'), 'w')
+
+    fzm = open(os.path.join(output_dir, 'zeromeans.txt'), 'w')
+    fom = open(os.path.join(output_dir, 'onemeans.txt'), 'w')
+
+    # Do something
+
+    # Close files
+    fzt.close()
+    fot.close()
+    fz.close()
+    fo.close()
+    fzm.close()
+    fom.close()
+
+    return True
+
+if __name == '__main__':
+
+    if len(sys.argv) < 3:
+        print 'Usage: ', sys.argv[0], ' <input_dir> <output_dir>'
+        exit
+
+    # Parse cmdline
+    input_dir = sys.argv[1]
+    output_dir = sys.argv[2]
+
+    if not os.path.isdir(input_dir):
+        print "Error: invalid input_dir: ", input_dir
+        exit
+
+    if not os.path.isdir(output_dir):
+        print 'Warning: output_dir ', output_dir, ' doesn't exists, try to create it ...'
+        os.mkdir(output_dir)
+        if not os.path.isdir(output_dir):
+            print 'Error: fail to create output_dir ', output_dir
+            exit
+
+    # Do works
+    success_count = 0
+    fail_count = 0
+    for f in os.listdir(input_dir):
+        # Skip dir
+        if os.path.isdir(f):
+            print 'Info: skip dir ', f
+            continue
+
+        # Deal file
+        if deal(f, output_dir):
+            success_count += 1
+        else:
+            fail_count += 1
+
+    total_count = success_count + fail_count
+
+    print total_count, 'file(s) in ', input_dir, 'have(has) been dealed'
+    print 'Success: ', success_count
+    print 'Fail: ', fail_count
+</code>
+----------------------------------------------------------------------------------------------------
+人工打分：

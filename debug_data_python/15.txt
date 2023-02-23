@@ -1,0 +1,33 @@
+问题描述：
+一个python正则表达式匹配问题
+def getHtml(url):
+    page = urllib.urlopen(url)
+    html = page.read()
+    return html
+def getDest(html):
+    //some code
+    return 
+html = getHtml("http://www.weather.com.cn/weather/101280101.shtml")
+print getDest(html)
+我想通过上面的代码抓取html里的以下数据，并输出到控制台，主要是天气和温度
+
+因为之前没学过python，函数getDest（）查了资料半天都没有写出来，求各位给个可用的代码 
+----------------------------------------------------------------------------------------------------
+修改方案：
+给你个亲测可用的
+<code>import urllib
+import re
+
+def getHtml(url):
+    page = urllib.urlopen(url)
+    html = page.read()
+    return html
+
+def getDest(html):
+    return re.findall(r'<h1>(?P<date_str>[^<]*)</h1>.*?<p title="[^"]*" class="wea">(?P<weather>[^<]*)</p>.*?<i>(?P<temperature>\d+[^<]+)</i>', html, re.S)
+
+for each in getDest(getHtml("http://www.weather.com.cn/weather/101280101.shtml")):
+    print each[0], each[1], each[2]
+</code>
+----------------------------------------------------------------------------------------------------
+人工打分：

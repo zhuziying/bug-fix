@@ -1,0 +1,77 @@
+问题描述：
+python3爬虫遇到报错 “urlopen error no host given”
+程序是爬百度图片搜索范冰冰的所有图片。Notepad已经选择了UTF8编码，URL地址也没有回车分行。
+ 直接上代码如下：
+import urllib.request
+import re
+import sys
+import os
+import urllib
+import ssl
+#根据给定的网址来获取网页详细信息，得到的html就是网页的源代码
+def getHtml(url):
+    page = urllib.request.urlopen(url)
+    html = page.read()
+    return html.decode('utf-8')
+def getImg(html):
+    imglist = re.findall('"ObjURL":"(.*?)",', html, re.S)#表示在整个网页中过滤出所有图片的地址，放在imglist中
+    x = 0
+    path = 'D:\test'
+   # 将图片保存到D:\test文件夹中，如果没有test文件夹则创建
+    if not os.path.isdir(path):
+        os.makedirs(path)
+    paths = path+'\'      #保存在test路径下  
+<code>for imgurl in imglist:  
+    urllib.request.urlretrieve(imgurl,'D:\\test\\%s.jpg' % x)  #打开imglist中保存的图片网址，并下载图片保存在本地，format格式化字符串 
+    x = x + 1  
+return imglist
+</code>
+url="http://image.baidu.com/search/index?tn=baiduimage&ps=1&ct=201326592&lm=-1&cl=2&nc=1&ie=utf-8&word=%E8%8C%83%E5%86%B0%E5%86%B0"
+html=getHtml(url)
+print (getImg(html)) #从网页源代码中分析并下载保存图片 
+----------------------------------------------------------------------------------------------------
+修改方案：
+1.使用'"ObjURL":"查找的图片地址很多都是无效的,所以会urlopen error no host given出错;
+2.图片网站有反爬机制,需要添加headers头,亲测以下代码可运行:
+<code>import os
+import re
+import requests
+import urllib
+def getHtml(url):
+    page = urllib.request.urlopen(url)
+    html = page.read()
+    return html.decode('utf-8')
+
+def getImg(html):
+    imglist = re.findall('"thumbURL":"(.*?)",', html, re.S)#表示在整个网页中过滤出所有图片的地址,放在imglist中
+    x = 0
+    path = 'D:\test\\'
+    #
+    # # 将图片保存到D:\test文件夹中,如果没有test文件夹则创建
+     if not os.path.isdir(path):
+        os.makedirs(path)
+       path = path+'\\' #保存在test路径下
+    headers={
+'Referer':'http://image.baidu.com/search/index?tn=baiduimage&ps=1&ct=201326592&lm=-1&cl=2&nc=1&ie=utf-8&word=%E8%8C%83%E5%86%B0%E5%86%B0',
+'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0'
+
+    }
+    s=requests.session()
+    s.headers.update(headers)
+    for imgurl in imglist:
+        #urllib.request.urlretrieve(imgurl,'D:\\test\\%s.jpg' % x)  #打开imglist中保存的图片网址,并下载图片保存在本地,format格式化字符串
+        x = x + 1
+        img=s.get(url=imgurl)
+        print(img)
+        with open(path+'%s.jpg' % x, 'wb') as file:
+            file.write(img.content)
+    return imglist
+
+url="http://image.baidu.com/search/index?tn=baiduimage&ps=1&ct=201326592&lm=-1&cl=2&nc=1&ie=utf-8&word=%E8%8C%83%E5%86%B0%E5%86%B0"
+html=getHtml(url)
+print (getImg(html)) #从网页源代码中分析并下载保存图片 
+
+</code>
+如果答案对你有帮助,麻烦采纳下!!!
+----------------------------------------------------------------------------------------------------
+人工打分：

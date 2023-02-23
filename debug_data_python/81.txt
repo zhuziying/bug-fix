@@ -1,0 +1,49 @@
+问题描述：
+flask_script中有关Manager的问题
+app.py中代码如下
+<code> from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello World!'
+
+
+if __name__ == '__main__':
+    app.run()
+
+</code>
+manager.py代码如下：
+<code>from flask_script import *
+import app
+
+manager = Manager(app)
+
+@manager.command
+def runserver():
+    print('Server is running!')
+
+if __name__ == '__main__':
+    manager.run()
+</code>
+在cmd中键入 python manager.py runserver之后报错信息如下
+环境为Win10 64bit python 3.6.4
+如果是在 app.py 中使用 Manager 则不会报错，请问各位大神，为什么会这样？ 
+----------------------------------------------------------------------------------------------------
+修改方案：
+解决了,修改 manager.py 的代码如下
+<code>from flask_script import *
+import app
+
+manager = Manager(app.app)
+
+@manager.command
+def runserver():
+    print('Server is running!')
+
+if __name__ == '__main__':
+    manager.run()
+</code>
+猜测其缘由应该是,使用 import app 是引入 app.py 文件,而 Manager 函数真正需要的是变量 app,因此需要调用 app.py 文件中的 app 变量,如有错误,请大神指出
+----------------------------------------------------------------------------------------------------
+人工打分：

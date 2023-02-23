@@ -1,0 +1,113 @@
+问题描述：
+Python多线程多进程问题
+新手求问，刚学习python，发现在两个线程或两个进程开启后（都有一个while循环），必须要第一个执行完成，第二个才会执行，求问为什么会这样
+<code> import threading
+import time
+
+class Test:
+    def run(self):
+        threading.Thread(target=self.func1()).start()
+        threading.Thread(target=self.func2()).start()
+
+    def func1(self):
+        count = 0
+        while count < 3:
+            print("thread1")
+            count += 1
+            time.sleep(2)
+
+    def func2(self):
+        count = 0
+        while count < 3:
+            print("thread2")
+            count += 1
+            time.sleep(1)
+
+
+if __name__ == "__main__":
+    Test().run()
+</code>
+<code> import multiprocessing
+import time
+
+class Test:
+    def run(self):
+        multiprocessing.Process(target=self.func1()).start()
+        multiprocessing.Process(target=self.func2()).start()
+
+    def func1(self):
+        count = 0
+        while count < 3:
+            print("thread1")
+            count += 1
+            time.sleep(2)
+
+    def func2(self):
+        count = 0
+        while count < 3:
+            print("thread2")
+            count += 1
+            time.sleep(1)
+
+
+if __name__ == "__main__":
+    Test().run()
+</code>
+执行结果：
+<code> thread1
+thread1
+thread1
+thread2
+thread2
+thread2
+</code> 
+----------------------------------------------------------------------------------------------------
+修改方案：
+你在函数传参时后面加了小括号就成函数调用了不是把函数当做参数传参
+正确的代码:
+import threading
+import time
+class Test:
+    def run(self):
+        threading.Thread(target=self.func1).start()
+        threading.Thread(target=self.func2).start()
+<code>def func1(self):
+    count = 0
+    while count < 3:
+        print("thread1")
+        count += 1
+        time.sleep(2)
+
+def func2(self):
+    count = 0
+    while count < 3:
+        print("thread2")
+        count += 1
+        time.sleep(1)
+</code>
+if name == "__main__":
+    Test().run()
+import multiprocessing
+import time
+class Test:
+    def run(self):
+        multiprocessing.Process(target=self.func1).start()
+        multiprocessing.Process(target=self.func2).start()
+<code>def func1(self):
+    count = 0
+    while count < 3:
+        print("thread1")
+        count += 1
+        time.sleep(2)
+
+def func2(self):
+    count = 0
+    while count < 3:
+        print("thread2")
+        count += 1
+        time.sleep(1)
+</code>
+if name == "__main__":
+    Test().run()
+----------------------------------------------------------------------------------------------------
+人工打分：
